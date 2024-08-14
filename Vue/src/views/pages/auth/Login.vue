@@ -172,7 +172,7 @@ watch(apiAvailability, (newValue) => {
           style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
         <div class="w-full surface-card pt-7 pb-8 px-5 sm:px-8" style="border-radius: 53px">
           <div class="text-center mb-5">
-            <LogoSvg/>
+            <LogoSvg displayHeight="70" marginBottom="mb-1"/>
             <div class="text-900 text-3xl font-bold mb-3">{{ globalConfig.appName }}</div>
             <div style="width: 330px; height: 20px">
               <span class="transition: opacity 0.5stext-600 font-bold ayou" style="transition: opacity 0.5s">{{
@@ -180,7 +180,6 @@ watch(apiAvailability, (newValue) => {
                 }}</span>
             </div>
           </div>
-
           <div class="pt-3">
                         <span class="p-float-label mb-5">
                             <InputText id="accountLoginId" v-model="accountLoginId" class="w-full p-3"
@@ -189,7 +188,6 @@ watch(apiAvailability, (newValue) => {
                                 :class="{ 'text-600': accountLoginIdIsFocus || accountLoginId.length > 0, 'text-500': !accountLoginIdIsFocus }"
                                 class="font-bold ml-1" for="username">Account ID</label>
                         </span>
-
             <span class="p-float-label mb-4">
                             <Password
                                 id="accountLoginPassword"
