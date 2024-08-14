@@ -70,10 +70,4 @@ dependencies {
     // HuTool
     implementation 'cn.hutool:hutool-all:5.8.27'
 
-    // 阿里云百炼 SDK
-    implementation ('com.alibaba:dashscope-sdk-java:2.14.4') {
-        // 排除slf4j
-        exclude group: 'org.slf4j'
-    }
-
 }
