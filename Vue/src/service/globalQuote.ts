@@ -31,8 +31,10 @@ export const addClassById = (id:string, className:string, second = 5) => {
 
 export interface AppConfig {
     appName: string;
+    appTokenName: string;
 }
 
 export const globalConfig: AppConfig = {
     appName: 'OpenIAM',
+    appTokenName: 'openToken'
 };

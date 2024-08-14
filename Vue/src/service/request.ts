@@ -1,6 +1,7 @@
 import axios from 'axios';
 import cookie from 'js-cookie';
 import router from './router';
+import {globalConfig} from './globalQuote.ts';
 
 export const url = 'http://localhost:8090';
 
@@ -16,9 +17,10 @@ service.defaults.withCredentials = false;
 // 请求拦截器
 service.interceptors.request.use(
     (config) => {
+      const tokenValue = cookie.get(globalConfig.appTokenName);
         // 将cookie中的token设置在请求头中
-        if (cookie.get('tokenValue') !== '' || cookie.get('tokenValue') != null) {
-            config.headers['token'] = cookie.get('tokenValue');
+        if (tokenValue !== '' && tokenValue !== null && tokenValue !== undefined) {
+            config.headers['token'] = tokenValue;
         }
         config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         return config;
@@ -36,7 +38,7 @@ service.interceptors.response.use(
         // 会话失效
         if (code === 701) {
             // 清除token
-            cookie.remove('tokenValue');
+            cookie.remove(globalConfig.appTokenName);
             // 页面跳转
             router.push({
                 path: '/auth/login',

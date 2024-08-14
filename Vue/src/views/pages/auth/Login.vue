@@ -63,7 +63,7 @@ const login = () => {
     toast.add(responseToastConfig(res));
     if (res.data.code === 200 && res.data.data.tokenValue !== null) {
       // token存入cookie
-      cookie.set('tokenValue', res.data.data.tokenValue);
+      cookie.set(globalConfig.appTokenName, res.data.data.tokenValue);
       // 页面跳转
       router.push({
         path: '/'
