@@ -1,6 +1,7 @@
 import {AxiosResponse} from 'axios';
+import {ToastMessageOptions} from 'primevue/toast';
 
-export const responseToastConfig = (response:AxiosResponse<any>) => {
+export const responseToastConfig = (response:AxiosResponse<any>):ToastMessageOptions => {
     if (response.data.code === 200) {
         return {
             severity: 'success',
