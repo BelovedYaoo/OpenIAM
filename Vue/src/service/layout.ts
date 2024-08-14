@@ -3,6 +3,7 @@ import {computed, reactive, toRefs} from 'vue';
 const layoutConfig = reactive({
   // 按钮的涟漪效果
   ripple: true,
+  // 是否处于深色模式
   darkTheme: false,
   inputStyle: 'outlined',
   menuMode: 'static',
@@ -21,11 +22,11 @@ const layoutState = reactive({
 
 export function useLayout() {
   const switchDarkTheme = () => {
-    const mode = !layoutConfig.darkTheme ? 'dark' : 'light';
+    layoutConfig.darkTheme = !layoutConfig.darkTheme;
     const elementId = 'theme-css';
     const linkElement: HTMLElement | null = document.getElementById(elementId);
     const cloneLinkElement: Node = (linkElement as HTMLElement).cloneNode(true);
-    const newThemeUrl = linkElement?.getAttribute('href')?.replace(layoutConfig.darkTheme ? 'dark' : 'light', mode);
+    const newThemeUrl = linkElement?.getAttribute('href')?.replace(!layoutConfig.darkTheme ? 'dark' : 'light', layoutConfig.darkTheme ? 'dark' : 'light');
     (cloneLinkElement as Element).setAttribute('id', `${elementId}-clone`);
     (cloneLinkElement as Element).setAttribute('href', (newThemeUrl as string));
     cloneLinkElement.addEventListener('load', () => {
@@ -33,7 +34,6 @@ export function useLayout() {
       (cloneLinkElement as Element).setAttribute('id', elementId);
     });
     (linkElement as HTMLElement)?.parentNode?.insertBefore(cloneLinkElement, (linkElement as HTMLElement).nextSibling);
-    layoutConfig.darkTheme = !layoutConfig.darkTheme;
   };
 
   const setScale = (scale: number) => {
