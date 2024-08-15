@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useLayout } from '../service/layout';
-import {globalConfig} from '../service/globalQuote';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useLayout } from '@/service/layout';
+import { globalConfig } from '@/service/globalQuote';
 
 const { switchDarkTheme, layoutConfig, onMenuToggle } = useLayout();
 
@@ -57,7 +57,7 @@ const logoUrl = computed(() => {
 <template>
     <div class="layout-topbar">
         <div class="layout-topbar-logo" @click="onMenuToggle()">
-            <img src="/images/logo.svg" alt="logo" />
+            <img alt="logo" src="/images/logo.svg"/>
             <span class="pl-2">{{ globalConfig.appName }}</span>
         </div>
 
@@ -69,12 +69,15 @@ const logoUrl = computed(() => {
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <Button @click="switchDarkTheme()" text rounded class="p-2 layout-menu-button" style="width: 41px; height: 41px">
-                <img :src="logoUrl" width="25" height="25" alt="s" />
+        <div :class="topbarMenuClasses" class="layout-topbar-menu">
+            <Button class="p-2 layout-menu-button" rounded style="width: 41px; height: 41px" text
+                    @click="switchDarkTheme()">
+                <img :src="logoUrl" alt="s" height="25" width="25"/>
             </Button>
-            <Button icon="pi pi-bookmark" severity="secondary" text rounded aria-label="Bookmark" size="large" class="layout-menu-button" />
-            <Button icon="pi pi-search" severity="success" text rounded aria-label="Search" size="large" class="layout-menu-button" />
+            <Button aria-label="Bookmark" class="layout-menu-button" icon="pi pi-bookmark" rounded severity="secondary" size="large"
+                    text/>
+            <Button aria-label="Search" class="layout-menu-button" icon="pi pi-search" rounded severity="success" size="large"
+                    text/>
         </div>
     </div>
 </template>

@@ -1,10 +1,10 @@
 <script setup>
-import {globalConfig} from '../service/globalQuote';
+import { globalConfig } from '@/service/globalQuote';
 </script>
 
 <template>
     <div class="layout-footer">
-        <img src="/images/logo.svg" alt="Logo" height="20" class="mr-2" />
+        <img alt="Logo" class="mr-2" height="20" src="/images/logo.svg"/>
         by
         <span class="font-medium ml-2">{{ globalConfig.appName }}</span>
     </div>

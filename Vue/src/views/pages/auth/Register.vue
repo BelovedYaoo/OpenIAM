@@ -2,10 +2,10 @@
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
-import request from '../../../service/request';
-import {addClassById, globalConfig, responseToastConfig} from '../../../service/globalQuote';
 import { SHA256 } from 'crypto-js';
-import LogoSvg from '../../../components/LogoSvg.vue';
+import { addClassById, globalConfig, responseToastConfig } from '@/service/globalQuote';
+import request from '@/service/request';
+import LogoSvg from '@/components/LogoSvg.vue';
 
 const router = useRouter();
 const toast = useToast();
@@ -125,35 +125,40 @@ const getVerifyCode = () => {
 </script>
 
 <template>
-    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div
+        class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
-            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
+            <div
+                style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full surface-card pt-7 pb-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="flex flex-row text-left">
-                        <LogoSvg />
+                        <LogoSvg/>
                         <div class="text-left mb-5 ml-4">
                             <div class="w-auto text-900 text-xl font-bold mb-2">{{ globalConfig.appName }}</div>
                             <div style="width: 256px; height: 20px">
-                                <span class="text-600 font-bold ayou" style="transition: opacity 0.5s">Let‘s get started</span>
+                                <span class="text-600 font-bold ayou"
+                                      style="transition: opacity 0.5s">Let‘s get started</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-3">
                         <span class="p-float-label mb-5">
-                            <InputText id="accountLoginId" v-model="accountLoginId" class="w-full p-3" />
+                            <InputText id="accountLoginId" v-model="accountLoginId" class="w-full p-3"/>
                             <label class="text-600 font-bold ml-1" for="username">Account ID</label>
                         </span>
 
                         <span class="p-float-label mb-5">
-                            <Password id="accountLoginPassword" v-model="accountLoginPassword" :toggleMask="true" class="w-full" inputClass="w-full p-3 font-bold" mediumLabel="适中" prompt-label="输入您的密码" strongLabel="安全" weakLabel="过于简单">
+                            <Password id="accountLoginPassword" v-model="accountLoginPassword" :toggleMask="true"
+                                      class="w-full" inputClass="w-full p-3 font-bold" mediumLabel="适中"
+                                      prompt-label="输入您的密码" strongLabel="安全" weakLabel="过于简单">
                                 <template #header>
                                     <label class="text-600 font-bold pb-2">我们不会存储您的明文密码</label>
-                                    <br />
+                                    <br/>
                                     <label class="text-600 font-bold">您的密码将在本地经过加密与二次编码后上传</label>
                                 </template>
                                 <template #footer>
-                                    <Divider class="my-2" />
+                                    <Divider class="my-2"/>
                                     <p class="mb-0">密码建议</p>
                                     <ul class="pl-3 ml-2 mt-2 mb-0" style="line-height: 1.5">
                                         <li>至少一个小写字母</li>
@@ -168,20 +173,24 @@ const getVerifyCode = () => {
 
                         <div class="p-inputgroup mb-5" style="height: 47px">
                             <span class="p-float-label">
-                                <InputText v-if="!usePhone" id="accountEmail" v-model="accountEmail" class="p-3 text-700 font-bold" />
-                                <InputText v-else id="accountPhone" v-model="accountPhone" class="p-3 text-700 font-bold" />
+                                <InputText v-if="!usePhone" id="accountEmail" v-model="accountEmail"
+                                           class="p-3 text-700 font-bold"/>
+                                <InputText v-else id="accountPhone" v-model="accountPhone"
+                                           class="p-3 text-700 font-bold"/>
                                 <label v-if="!usePhone" class="text-600 font-bold ml-1" for="verifyCode">Email</label>
                                 <label v-else class="text-600 font-bold ml-1" for="verifyCode">Phone</label>
                             </span>
-                            <Button class="w-6" :label="usePhone ? '使用 Email' : '使用手机号'" @click="usePhone = !usePhone" outlined />
+                            <Button :label="usePhone ? '使用 Email' : '使用手机号'" class="w-6" outlined
+                                    @click="usePhone = !usePhone"/>
                         </div>
 
                         <div class="p-inputgroup mb-4" style="height: 47px">
                             <span class="p-float-label">
-                                <InputText id="verifyCode" v-model="verifyCode" class="p-3 text-700 font-bold" maxlength="6" />
+                                <InputText id="verifyCode" v-model="verifyCode" class="p-3 text-700 font-bold"
+                                           maxlength="6"/>
                                 <label class="text-600 font-bold ml-1" for="verifyCode">verifyCode</label>
                             </span>
-                            <Button class="w-6" label="获取验证码" @click="getVerifyCode()" outlined />
+                            <Button class="w-6" label="获取验证码" outlined @click="getVerifyCode()"/>
                         </div>
 
                         <div class="flex align-items-center justify-content-between pt-1 mb-3 gap-5">
@@ -189,7 +198,9 @@ const getVerifyCode = () => {
                                 <Checkbox id="agreed" v-model="agreed" binary class="mr-2"></Checkbox>
                                 <label for="agreed">同意用户协议</label>
                             </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)" @click="router.push({ path: '/auth/login' })">返回登录</a>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                               style="color: var(--primary-color)"
+                               @click="router.push({ path: '/auth/login' })">返回登录</a>
                         </div>
                         <Button class="w-full p-3 text-xl" label="注册" @click="registerAccount()"></Button>
                     </div>

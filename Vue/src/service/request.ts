@@ -1,12 +1,12 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import cookie from 'js-cookie';
 import router from './router';
-import {globalConfig} from './globalQuote.ts';
+import { globalConfig } from './globalQuote.ts';
 
-export const url = 'http://localhost:8090';
+export const url: string = 'http://localhost:8090';
 
 // Axios 实例
-const service = axios.create({
+const service: AxiosInstance = axios.create({
     baseURL: url,
     timeout: 10000 // 请求超时时间
 });
@@ -17,7 +17,7 @@ service.defaults.withCredentials = false;
 // 请求拦截器
 service.interceptors.request.use(
     (config) => {
-      const tokenValue = cookie.get(globalConfig.appTokenName);
+        const tokenValue = cookie.get(globalConfig.appTokenName);
         // 将cookie中的token设置在请求头中
         if (tokenValue !== '' && tokenValue !== null && tokenValue !== undefined) {
             config.headers['token'] = tokenValue;
