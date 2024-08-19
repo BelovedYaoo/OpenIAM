@@ -1,8 +1,8 @@
-package top.prefersmin.openiam.common.handler.enums;
+package top.prefersmin.openiam.permission.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import top.prefersmin.openiam.common.handler.ResultType;
+import top.prefersmin.openiam.common.base.result.ResultType;
 
 /**
  * 认证结果枚举类

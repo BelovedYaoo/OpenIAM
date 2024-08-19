@@ -1,4 +1,4 @@
-package top.prefersmin.openiam.common.handler;
+package top.prefersmin.openiam.common.base.result;
 
 /**
  * 返回结果类型接口

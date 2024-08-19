@@ -1,11 +1,10 @@
-package top.prefersmin.openiam.common.handler;
+package top.prefersmin.openiam.common.base.result;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.prefersmin.openiam.common.handler.enums.ResultEnum;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,8 @@
-package top.prefersmin.openiam.common.handler.enums;
+package top.prefersmin.openiam.common.base.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import top.prefersmin.openiam.common.handler.ResultType;
 
 /**
  * 通用结果枚举类

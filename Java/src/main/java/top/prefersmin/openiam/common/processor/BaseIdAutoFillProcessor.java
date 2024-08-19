@@ -1,4 +1,4 @@
-package top.prefersmin.openiam.common.handler;
+package top.prefersmin.openiam.common.processor;
 
 import cn.hutool.core.util.IdUtil;
 import com.tangzc.mybatisflex.annotation.handler.AutoFillHandler;
