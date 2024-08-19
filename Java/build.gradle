@@ -35,8 +35,8 @@ dependencies {
     // AspectJ Weaver
     implementation 'org.aspectj:aspectjweaver:1.9.7'
 
-    // MariaDB
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    // MySQL Driver
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

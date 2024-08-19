@@ -45,9 +45,9 @@ mybatis-flex:
     # 数据数据库
     data:
       # 数据源类型
-      type: org.mariadb.jdbc.MariaDbDataSource
+      type: com.mysql.cj.jdbc.MysqlDataSource
       # 数据库连接地址
-      url: jdbc:mariadb://localhost:3307/openiam_data
+      url: jdbc:mysql://localhost:3307/openiam_data
       # 数据库用户名 & 密码
       user: root
       password: root
@@ -55,9 +55,9 @@ mybatis-flex:
     # 权限数据库
     permission:
       # 数据源类型
-      type: org.mariadb.jdbc.MariaDbDataSource
+      type: com.mysql.cj.jdbc.MysqlDataSource
       # 数据库连接地址
-      url: jdbc:mariadb://localhost:3307/openiam_permission
+      url: jdbc:mysql://localhost:3307/openiam_permission
       # 数据库用户名 & 密码
       user: root
       password: root
@@ -65,9 +65,9 @@ mybatis-flex:
     # 日志数据库
     log:
       # 数据源类型
-      type: org.mariadb.jdbc.MariaDbDataSource
+      type: com.mysql.cj.jdbc.MysqlDataSource
       # 数据库连接地址
-      url: jdbc:mariadb://localhost:3307/openiam_log
+      url: jdbc:mysql://localhost:3307/openiam_log
       # 数据库用户名 & 密码
       user: root
       password: root
