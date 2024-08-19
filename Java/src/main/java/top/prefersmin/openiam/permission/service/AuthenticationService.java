@@ -1,6 +1,6 @@
 package top.prefersmin.openiam.permission.service;
 
-import top.prefersmin.openiam.common.handler.Result;
+import top.prefersmin.openiam.common.base.result.Result;
 import top.prefersmin.openiam.permission.entity.Account;
 
 /**

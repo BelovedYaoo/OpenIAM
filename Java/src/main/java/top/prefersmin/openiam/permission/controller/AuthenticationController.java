@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import top.prefersmin.openiam.common.handler.Result;
+import top.prefersmin.openiam.common.base.result.Result;
 import top.prefersmin.openiam.permission.entity.Account;
 import top.prefersmin.openiam.permission.service.impl.AccountServiceImpl;
 import top.prefersmin.openiam.permission.service.impl.AuthenticationServiceImpl;

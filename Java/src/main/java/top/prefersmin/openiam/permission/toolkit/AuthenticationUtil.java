@@ -3,8 +3,8 @@ package top.prefersmin.openiam.permission.toolkit;
 import cn.hutool.core.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import top.prefersmin.openiam.common.handler.Result;
-import top.prefersmin.openiam.common.handler.enums.AuthenticationResultEnum;
+import top.prefersmin.openiam.common.base.result.Result;
+import top.prefersmin.openiam.permission.enums.AuthenticationResultEnum;
 import top.prefersmin.openiam.common.toolkit.JedisPoolUtil;
 import top.prefersmin.openiam.common.toolkit.LogUtil;
 

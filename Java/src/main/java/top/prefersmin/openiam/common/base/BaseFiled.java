@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.prefersmin.openiam.common.handler.BaseIdAutoFillProcessor;
+import top.prefersmin.openiam.common.processor.BaseIdAutoFillProcessor;
 
 import java.io.Serializable;
 import java.util.Date;

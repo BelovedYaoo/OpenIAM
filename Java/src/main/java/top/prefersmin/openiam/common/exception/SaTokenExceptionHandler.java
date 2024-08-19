@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import top.prefersmin.openiam.common.handler.Result;
-import top.prefersmin.openiam.common.handler.enums.AuthenticationResultEnum;
-import top.prefersmin.openiam.common.handler.enums.ResultEnum;
+import top.prefersmin.openiam.common.base.result.Result;
+import top.prefersmin.openiam.permission.enums.AuthenticationResultEnum;
+import top.prefersmin.openiam.common.base.result.ResultEnum;
 import top.prefersmin.openiam.common.toolkit.LogUtil;
 
 /**
