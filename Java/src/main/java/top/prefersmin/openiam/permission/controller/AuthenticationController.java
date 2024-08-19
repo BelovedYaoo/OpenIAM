@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.prefersmin.openiam.common.handler.Result;
-import top.prefersmin.openiam.permission.entity.po.Account;
+import top.prefersmin.openiam.permission.entity.Account;
+import top.prefersmin.openiam.permission.service.impl.AccountServiceImpl;
 import top.prefersmin.openiam.permission.service.impl.AuthenticationServiceImpl;
 import top.prefersmin.openiam.permission.toolkit.AuthenticationUtil;
 
@@ -17,7 +18,7 @@ import static top.prefersmin.openiam.permission.service.impl.AuthenticationServi
  * 认证控制层
  *
  * @author PrefersMin
- * @version 1.2
+ * @version 1.3
  */
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +31,17 @@ public class AuthenticationController {
     private final AuthenticationUtil authenticationUtil;
 
     private final AuthenticationServiceImpl authenticationService;
+
+    private final AccountServiceImpl accountService;
+
+    @PostMapping("/test")
+    public boolean test() {
+        return accountService.save(Account.builder()
+                .openId("123")
+                .password("012e36e1e55a4c3bab6845b3438f8aff")
+                .email("prefersmin@qq.com")
+                .build());
+    }
 
     /**
      * 账号登录方法
@@ -65,7 +77,7 @@ public class AuthenticationController {
      */
     @PostMapping("/getVerifyCode")
     public Result getVerifyCode(@ModelAttribute Account account, @RequestParam(value = "usePhone") boolean usePhone) {
-        return authenticationUtil.codeVerify(VERIFY_CODE_PREFIX, usePhone ? account.accountPhone() : account.accountEmail());
+        return authenticationUtil.codeVerify(VERIFY_CODE_PREFIX, usePhone ? account.phone() : account.email());
     }
 
 }

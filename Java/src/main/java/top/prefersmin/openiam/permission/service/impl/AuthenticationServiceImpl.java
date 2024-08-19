@@ -2,14 +2,13 @@ package top.prefersmin.openiam.permission.service.impl;
 
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.util.IdUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.prefersmin.openiam.common.handler.Result;
 import top.prefersmin.openiam.common.handler.enums.AuthenticationResultEnum;
 import top.prefersmin.openiam.common.toolkit.JedisPoolUtil;
-import top.prefersmin.openiam.permission.entity.po.Account;
+import top.prefersmin.openiam.permission.entity.Account;
 import top.prefersmin.openiam.permission.service.AuthenticationService;
 import top.prefersmin.openiam.permission.toolkit.AuthenticationUtil;
 
@@ -19,7 +18,7 @@ import static cn.hutool.core.util.ObjectUtil.isNull;
  * 认证服务实现类
  *
  * @author PrefersMin
- * @version 1.0
+ * @version 1.1
  */
 @Service
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Result accountLogin(Account accountData) {
 
         Account account = accountService.getOne(new QueryWrapper()
-                .eq("account_login_id", accountData.accountLoginId()));
+                .eq("open_id", accountData.openId()));
 
         // 账号不存在
         if (account == null) {
@@ -59,15 +58,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // 密码错误
-        if (!account.accountLoginPassword().equals(accountData.accountLoginPassword())) {
+        if (!account.password().equals(accountData.password())) {
             return Result.failed().resultType(AuthenticationResultEnum.ACCOUNT_PASSWORD_ERROR);
         }
 
         // 封禁逻辑
-        StpUtil.checkDisable(account.accountId());
+        StpUtil.checkDisable(account.getBaseId());
 
         // Sa-Token登录
-        StpUtil.login(accountData.accountLoginId(), SaLoginConfig.setExtra("accountLoginID", accountData.accountLoginId()).setDevice("Default"));
+        StpUtil.login(accountData.openId(), SaLoginConfig.setExtra("openId", accountData.openId()).setDevice("Default"));
 
         return Result.success().description("登录成功")
                 .data("account", account)
@@ -98,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         accountData = (Account) accountDataBindCheckResult.data().get("accountData");
 
         // 验证码检查
-        String codeBind = usePhone ? accountData.accountPhone() : accountData.accountEmail();
+        String codeBind = usePhone ? accountData.phone() : accountData.email();
         if (isNull(codeBind) || codeBind.isEmpty()) {
             return Result.failed().resultType(AuthenticationResultEnum.MUST_USE_PHONE_OR_EMAIL);
         }
@@ -108,14 +107,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return verifyResult.state(null).message("注册失败");
         }
 
-        // 随机UUID
-        String simpleUuid = IdUtil.simpleUUID();
-
         // 数据入库
-        accountService.save(accountData.accountId(simpleUuid));
+        accountService.save(accountData);
 
         // 清除验证码
-        JedisPoolUtil.del(VERIFY_CODE_PREFIX + ":" + (usePhone ? accountData.accountPhone() : accountData.accountEmail()));
+        JedisPoolUtil.del(VERIFY_CODE_PREFIX + ":" + (usePhone ? accountData.phone() : accountData.email()));
 
         return Result.success().description("注册成功");
 
@@ -138,13 +134,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Result accountDataBindCheck = Result.failed().state(false);
 
         // 检查登录ID是否已被使用
-        boolean accountLoginIdAlreadyUse = accountService.exists(new QueryWrapper().eq("account_login_id", accountData.accountLoginId()));
+        boolean accountLoginIdAlreadyUse = accountService.exists(new QueryWrapper().eq("open_id", accountData.openId()));
         if (accountLoginIdAlreadyUse) {
             return accountDataBindCheck.resultType(AuthenticationResultEnum.LOGIN_ID_ALREADY_USE);
         }
 
         // 检查绑定数据是否为空
-        if (usePhone ? accountData.accountPhone().isEmpty() : accountData.accountEmail().isEmpty()) {
+        if (usePhone ? accountData.phone().isEmpty() : accountData.email().isEmpty()) {
             return accountDataBindCheck.resultType(AuthenticationResultEnum.MUST_USE_PHONE_OR_EMAIL);
         }
 
@@ -153,13 +149,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // 构造查询条件并置空另一个绑定数据与检查结果
         if (usePhone) {
-            uniqueBindQuery.eq("account_phone", accountData.accountPhone());
+            uniqueBindQuery.eq("phone", accountData.phone());
             accountDataBindCheck.resultType(AuthenticationResultEnum.PHONE_NUMBER_ALREADY_USE);
-            accountData.accountEmail(null);
+            accountData.email(null);
         } else {
-            uniqueBindQuery.eq("account_email", accountData.accountEmail());
+            uniqueBindQuery.eq("email", accountData.email());
             accountDataBindCheck.resultType(AuthenticationResultEnum.EMAIL_ALREADY_ALREADY_USE);
-            accountData.accountPhone(null);
+            accountData.phone(null);
         }
 
         // 查询是否已存在对应条件的数据

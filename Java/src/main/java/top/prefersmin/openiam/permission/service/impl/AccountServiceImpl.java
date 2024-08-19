@@ -1,11 +1,11 @@
 package top.prefersmin.openiam.permission.service.impl;
 
+import com.mybatisflex.core.service.IService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import top.prefersmin.openiam.permission.entity.po.Account;
+import top.prefersmin.openiam.permission.entity.Account;
 import top.prefersmin.openiam.permission.mapper.AccountMapper;
-import top.prefersmin.openiam.permission.service.AccountService;
 
 /**
  * (Account)表服务实现类
@@ -15,6 +15,6 @@ import top.prefersmin.openiam.permission.service.AccountService;
  */
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService {
+public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements IService<Account> {
 
 }

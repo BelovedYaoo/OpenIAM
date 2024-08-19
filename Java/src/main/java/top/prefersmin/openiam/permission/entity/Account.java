@@ -1,9 +1,10 @@
-package top.prefersmin.openiam.permission.entity.po;
+package top.prefersmin.openiam.permission.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.annotation.UseDataSource;
+import com.tangzc.autotable.annotation.AutoTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,50 +26,46 @@ import java.io.Serializable;
 @Data
 @Builder
 @AllArgsConstructor
-@Table(value = "account")
+@Table(value = "account", dataSource = "permission")
+@AutoTable("account")
+@UseDataSource("permission")
 @Getter(onMethod_ = @JsonGetter)
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true, fluent = true)
 public class Account extends BaseFiled implements Serializable {
 
     /**
-     * 账号ID，该ID为系统内部使用
-     */
-    @Id
-    private String accountId;
-
-    /**
      * 登录ID，该ID为用户登录使用
      */
-    private String accountLoginId;
+    private String openId;
 
     /**
      * 登录密码，使用哈希散列加密存储
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String accountLoginPassword;
+    private String password;
 
     /**
      * 手机号
      */
     @Sensitization(type = SensitizationType.MOBILE_PHONE)
-    private String accountPhone;
+    private String phone;
 
     /**
      * 邮箱地址
      */
     @Sensitization(type = SensitizationType.EMAIL, prefixLen = 3, suffixLen = 2)
-    private String accountEmail;
+    private String email;
 
     /**
      * 昵称
      */
-    private String accountNickname;
+    private String nickname;
 
     /**
      * 头像地址
      */
-    private String accountAvatarAddress;
+    private String avatarAddress;
 
 }
 
