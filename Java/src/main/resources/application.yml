@@ -101,6 +101,9 @@ sa-token:
     is-log: false
 
 auto-table:
+    # 是否开启自动建表功能
     enable: true
+    # 是否输出banner
     show-banner: false
+    # 是否开启严格继承模式
     strict-extends: true
