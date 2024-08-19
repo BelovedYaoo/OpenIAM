@@ -1,6 +1,7 @@
 package top.prefersmin.openiam;
 
 import com.mybatisflex.core.FlexGlobalConfig;
+import com.tangzc.autotable.springboot.EnableAutoTable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author PrefersMin
  * @version 1.0
  */
+@EnableAutoTable
 @SpringBootApplication
 public class OpenIAMApplication {
 

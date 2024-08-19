@@ -43,11 +43,17 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // MyBatis-Flex
-    implementation 'com.mybatis-flex:mybatis-flex-spring-boot-starter:1.8.8'
-    annotationProcessor 'com.mybatis-flex:mybatis-flex-processor:1.8.8'
+    implementation 'com.mybatis-flex:mybatis-flex-spring-boot-starter:1.9.3'
+    annotationProcessor 'com.mybatis-flex:mybatis-flex-processor:1.9.3'
+
+    // Auto Table, 官方文档: https://autotable.tangzc.com/
+    implementation 'com.tangzc:auto-table-spring-boot-starter:1.8.3'
+
+    // MyBatis-Flex + Auto Table的拓展包, 仓库地址: https://gitee.com/tangzc/mybatis-flex-ext
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Sa-Token
-    implementation 'cn.dev33:sa-token-spring-boot-starter:1.37.0'
+    implementation 'cn.dev33:sa-token-spring-boot-starter:1.38.0'
 
     // Sa-Token 整合 Redis （使用 jackson 序列化方式）
     implementation 'cn.dev33:sa-token-redis-jackson:1.38.0'
@@ -56,7 +62,7 @@ dependencies {
     implementation 'cn.dev33:sa-token-jwt:1.38.0'
 
     // Jedis
-    implementation'redis.clients:jedis:5.0.2'
+    implementation 'redis.clients:jedis:5.0.2'
 
     // Jackson Core
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'

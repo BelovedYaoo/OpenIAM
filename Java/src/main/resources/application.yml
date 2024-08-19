@@ -97,3 +97,8 @@ sa-token:
     token-style: uuid
     # 是否输出操作日志
     is-log: false
+
+auto-table:
+    enable: true
+    show-banner: false
+    strict-extends: true
