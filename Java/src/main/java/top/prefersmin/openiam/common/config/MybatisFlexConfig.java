@@ -1,6 +1,8 @@
 package top.prefersmin.openiam.common.config;
 
 import com.mybatisflex.core.FlexGlobalConfig;
+import com.mybatisflex.core.logicdelete.LogicDeleteManager;
+import com.mybatisflex.core.logicdelete.impl.DateTimeLogicDeleteProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.prefersmin.openiam.common.processor.EntityInsertListener;
@@ -20,11 +22,12 @@ public class MybatisFlexConfig {
      */
     @Bean
     public static void init() {
-        // 设置全局逻辑删除字段
-        FlexGlobalConfig.getDefaultConfig().setLogicDeleteColumn("is_deleted");
+        FlexGlobalConfig globalConfig = FlexGlobalConfig.getDefaultConfig();
+        // 设置逻辑删除处理器
+        LogicDeleteManager.setProcessor(new DateTimeLogicDeleteProcessor());
         // 注册插入监听器、更新监听器
-        FlexGlobalConfig.getDefaultConfig().registerInsertListener(new EntityInsertListener(), Object.class);
-        FlexGlobalConfig.getDefaultConfig().registerUpdateListener(new EntityUpdateListener(), Object.class);
+        globalConfig.registerInsertListener(new EntityInsertListener(), Object.class);
+        globalConfig.registerUpdateListener(new EntityUpdateListener(), Object.class);
     }
 
 }

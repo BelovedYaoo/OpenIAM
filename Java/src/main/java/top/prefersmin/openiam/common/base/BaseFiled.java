@@ -1,6 +1,7 @@
 package top.prefersmin.openiam.common.base;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.tangzc.autotable.annotation.ColumnComment;
 import com.tangzc.autotable.annotation.ColumnDefault;
@@ -68,9 +69,9 @@ public class BaseFiled implements Serializable {
     /**
      * 逻辑删除
      */
-    @ColumnDefault("0")
     @ColumnComment("逻辑删除")
-    protected Boolean isDeleted;
+    @Column(isLogicDelete = true)
+    protected Date deletedAt;
 
     /**
      * 派生类方法在调用基类setter时会传递基类类型对象<p>
