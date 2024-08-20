@@ -46,12 +46,17 @@ import static top.prefersmin.openiam.common.toolkit.LogUtil.LOGGER;
  */
 public class EntityOperate {
 
+    /**
+     * get、set方法前缀
+     */
     static final String GET_PREFIX = "get";
     static final String SET_PREFIX = "set";
+
     /**
      * 需要处理的字段的缓存列表
      */
     private static final Map<Class<?>, List<Field>> FIELD_LIST_CATCH_MAP = new HashMap<>();
+
     /**
      * 基本类型与包装类型对应关系
      */
@@ -68,6 +73,12 @@ public class EntityOperate {
         baseTypeClassMap.put(Boolean.class, boolean.class);
     }
 
+    /**
+     * 获取给定类实例中的字段列表
+     *
+     * @param clazz 类实例
+     * @return 字段列表
+     */
     public static List<Field> getFieldList(Class<?> clazz) {
         return FIELD_LIST_CATCH_MAP.computeIfAbsent(clazz, ct -> {
             Field[] declaredFields = clazz.getDeclaredFields();
@@ -84,6 +95,12 @@ public class EntityOperate {
         });
     }
 
+    /**
+     * 通过类和字段获取属性描述符
+     * @param clazz 类实例
+     * @param field 字段实例
+     * @return 属性描述符
+     */
     public static PropertyDescriptor getPropertyDescriptor(Class<?> clazz, Field field) {
 
         List<PropertyDescriptor> beanPropertiesList = Arrays.stream(ReflectUtils.getBeanProperties(clazz))
@@ -106,7 +123,7 @@ public class EntityOperate {
     }
 
     /**
-     * 从给定的类中查找指定字段的getter、setter。
+     * 从给定的类实例中查找指定字段实例的getter、setter。
      *
      * @param clazz      要搜索的类
      * @param field      要搜索的字段
