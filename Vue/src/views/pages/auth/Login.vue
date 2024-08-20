@@ -13,8 +13,8 @@ let timer = reactive({});
 
 const toast = useToast();
 
-const accountLoginId = ref('');
-const accountLoginPassword = ref('');
+const openId = ref('');
+const password = ref('');
 const yiyan = ref('永远都有更好，但眼下便是最好');
 const apiList = ref(['/vvhan/text/love', '/yiyan', '/tenapi/yiyan', '/uapis/say']);
 const apiUse = ref('');
@@ -23,7 +23,7 @@ const remember = ref(false);
 const checked = ref(false);
 
 const passwordIsFocus = ref(false);
-const accountLoginIdIsFocus = ref(false);
+const openIdIsFocus = ref(false);
 
 const errorToast = (className, summary, detail) => {
     toast.add({
@@ -37,12 +37,12 @@ const errorToast = (className, summary, detail) => {
 };
 
 const checkRegisterAccountInfo = () => {
-    if (accountLoginId.value === '') {
-        errorToast('accountLoginId', '你有地方没填写喔~', '账号不能为空');
+    if (openId.value === '') {
+        errorToast('openId', '你有地方没填写喔~', '账号不能为空');
     }
 
-    if (accountLoginPassword.value === '') {
-        errorToast('accountLoginPassword', '你有地方没填写喔~', '密码不能为空');
+    if (password.value === '') {
+        errorToast('password', '你有地方没填写喔~', '密码不能为空');
     }
 };
 
@@ -56,8 +56,8 @@ const login = () => {
         method: 'POST',
         url: '/auth/accountLogin',
         data: {
-            accountLoginId: accountLoginId.value,
-            accountLoginPassword: btoa(SHA256(accountLoginPassword.value).toString())
+            openId: openId.value,
+            password: btoa(SHA256(password.value).toString())
         }
     }).then((res) => {
         toast.add(responseToastConfig(res));
@@ -176,23 +176,23 @@ watch(apiAvailability, (newValue) => {
                         <LogoSvg displayHeight="70" marginBottom="mb-1"/>
                         <div class="text-900 text-3xl font-bold mb-3">{{ globalConfig.appName }}</div>
                         <div style="width: 330px; height: 20px">
-              <span class="transition: opacity 0.5stext-600 font-bold ayou" style="transition: opacity 0.5s">{{
+              <span class="transition: opacity 0.5s text-600 font-bold ayou" style="transition: opacity 0.5s">{{
                       yiyan
                   }}</span>
                         </div>
                     </div>
                     <div class="pt-3">
                         <span class="p-float-label mb-5">
-                            <InputText id="accountLoginId" v-model="accountLoginId" class="w-full p-3"
-                                       @blur="accountLoginIdIsFocus = false" @focus="accountLoginIdIsFocus = true"/>
+                            <InputText id="openId" v-model="openId" class="w-full p-3"
+                                       @blur="openIdIsFocus = false" @focus="openIdIsFocus = true"/>
                             <label
-                                :class="{ 'text-600': accountLoginIdIsFocus || accountLoginId.length > 0, 'text-500': !accountLoginIdIsFocus }"
-                                class="font-bold ml-1" for="username">Account ID</label>
+                                :class="{ 'text-600': openIdIsFocus || openId.length > 0, 'text-500': !openIdIsFocus }"
+                                class="font-bold ml-1" for="username">Open ID</label>
                         </span>
                         <span class="p-float-label mb-4">
                             <Password
-                                id="accountLoginPassword"
-                                v-model="accountLoginPassword"
+                                id="password"
+                                v-model="password"
                                 :feedback="false"
                                 :toggleMask="true"
                                 class="w-full"
@@ -201,7 +201,7 @@ watch(apiAvailability, (newValue) => {
                                 @focus="passwordIsFocus = true"
                             ></Password>
                             <label
-                                :class="{ 'text-600': passwordIsFocus || accountLoginPassword.length > 0, 'text-500': !passwordIsFocus }"
+                                :class="{ 'text-600': passwordIsFocus || password.length > 0, 'text-500': !passwordIsFocus }"
                                 class="font-bold ml-1" for="password">Password</label>
                         </span>
 

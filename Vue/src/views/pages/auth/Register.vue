@@ -9,19 +9,19 @@ import LogoSvg from '@/components/LogoSvg.vue';
 
 const router = useRouter();
 const toast = useToast();
-const accountLoginId = ref('');
-const accountLoginPassword = ref('');
-const accountPhone = ref('');
-const accountEmail = ref('');
+const openId = ref('');
+const password = ref('');
+const phone = ref('');
+const email = ref('');
 const verifyCode = ref('');
 const checked = ref(false);
 const agreed = ref(false);
 const usePhone = ref(false);
 
-const accountLoginIdRegex = /[a-zA-Z0-9]{5,15}$/;
-const accountLoginPasswordRegex = /^.{5,20}$/;
-const accountPhoneRegex = /^1[0-9]{10}$/;
-const accountEmailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+const openIdRegex = /[a-zA-Z0-9]{5,15}$/;
+const passwordRegex = /^.{5,20}$/;
+const phoneRegex = /^1[0-9]{10}$/;
+const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
 const errorToast = (className, summary, detail) => {
     toast.add({
@@ -39,16 +39,16 @@ watch(verifyCode, () => {
 });
 
 const checkRegisterAccountInfo = () => {
-    if (accountLoginId.value === '') {
-        errorToast('accountLoginId', '你有地方没填写喔~', '账号不能为空');
-    } else if (!accountLoginIdRegex.test(accountLoginId.value)) {
-        errorToast('accountLoginId', '账号不合规', '最短5位，最长15位，只允许使用大小写字母与数字');
+    if (openId.value === '') {
+        errorToast('openId', '你有地方没填写喔~', '账号不能为空');
+    } else if (!openIdRegex.test(openId.value)) {
+        errorToast('openId', '账号不合规', '最短5位，最长15位，只允许使用大小写字母与数字');
     }
 
-    if (accountLoginPassword.value === '') {
-        errorToast('accountLoginPassword', '你有地方没填写喔~', '密码不能为空');
-    } else if (!accountLoginPasswordRegex.test(accountLoginPassword.value)) {
-        errorToast('accountLoginPassword', '密码不合规', '最短5位，最长20位');
+    if (password.value === '') {
+        errorToast('password', '你有地方没填写喔~', '密码不能为空');
+    } else if (!passwordRegex.test(password.value)) {
+        errorToast('password', '密码不合规', '最短5位，最长20位');
     }
 
     if (verifyCode.value === '') {
@@ -76,10 +76,10 @@ const registerAccount = () => {
         data: {
             usePhone: usePhone.value,
             verifyCode: verifyCode.value,
-            accountLoginId: accountLoginId.value,
-            accountLoginPassword: btoa(SHA256(accountLoginPassword.value).toString()),
-            accountPhone: accountPhone.value,
-            accountEmail: accountEmail.value
+            openId: openId.value,
+            password: btoa(SHA256(password.value).toString()),
+            phone: phone.value,
+            email: email.value
         }
     }).then((response) => {
         toast.add(responseToastConfig(response));
@@ -88,17 +88,16 @@ const registerAccount = () => {
 
 const verifyData = () => {
     if (usePhone.value) {
-        if (accountPhone.value === '') {
-            errorToast('accountPhone', '你有地方没填写喔~', '手机号不能为空');
-        } else if (!accountPhoneRegex.test(accountPhone.value)) {
-            errorToast('accountPhone', '手机号不合规', '仅支持中国大陆(+86)，请检查手机号是否正确');
+        if (phone.value === '') {
+            errorToast('phone', '你有地方没填写喔~', '手机号不能为空');
+        } else if (!phoneRegex.test(phone.value)) {
+            errorToast('phone', '手机号不合规', '仅支持中国大陆(+86)，请检查手机号是否正确');
         }
     } else {
-        console.log(2);
-        if (accountEmail.value === '') {
-            errorToast('accountEmail', '你有地方没填写喔~', '邮箱不能为空');
-        } else if (!accountEmailRegex.test(accountEmail.value)) {
-            errorToast('accountEmail', '邮箱不合规', '请检查邮箱格式是否正确');
+        if (email.value === '') {
+            errorToast('email', '你有地方没填写喔~', '邮箱不能为空');
+        } else if (!emailRegex.test(email.value)) {
+            errorToast('email', '邮箱不合规', '请检查邮箱格式是否正确');
         }
     }
 };
@@ -115,8 +114,8 @@ const getVerifyCode = () => {
         url: '/auth/getVerifyCode',
         data: {
             usePhone: usePhone.value,
-            accountPhone: accountPhone.value,
-            accountEmail: accountEmail.value
+            phone: phone.value,
+            email: email.value
         }
     }).then((response) => {
         toast.add(responseToastConfig(response));
@@ -144,12 +143,12 @@ const getVerifyCode = () => {
 
                     <div class="pt-3">
                         <span class="p-float-label mb-5">
-                            <InputText id="accountLoginId" v-model="accountLoginId" class="w-full p-3"/>
+                            <InputText id="openId" v-model="openId" class="w-full p-3"/>
                             <label class="text-600 font-bold ml-1" for="username">Account ID</label>
                         </span>
 
                         <span class="p-float-label mb-5">
-                            <Password id="accountLoginPassword" v-model="accountLoginPassword" :toggleMask="true"
+                            <Password id="password" v-model="password" :toggleMask="true"
                                       class="w-full" inputClass="w-full p-3 font-bold" mediumLabel="适中"
                                       prompt-label="输入您的密码" strongLabel="安全" weakLabel="过于简单">
                                 <template #header>
@@ -168,14 +167,14 @@ const getVerifyCode = () => {
                                     </ul>
                                 </template>
                             </Password>
-                            <label class="text-600 font-bold ml-1" for="accountLoginPassword">Password</label>
+                            <label class="text-600 font-bold ml-1" for="password">Password</label>
                         </span>
 
                         <div class="p-inputgroup mb-5" style="height: 47px">
                             <span class="p-float-label">
-                                <InputText v-if="!usePhone" id="accountEmail" v-model="accountEmail"
+                                <InputText v-if="!usePhone" id="email" v-model="email"
                                            class="p-3 text-700 font-bold"/>
-                                <InputText v-else id="accountPhone" v-model="accountPhone"
+                                <InputText v-else id="phone" v-model="phone"
                                            class="p-3 text-700 font-bold"/>
                                 <label v-if="!usePhone" class="text-600 font-bold ml-1" for="verifyCode">Email</label>
                                 <label v-else class="text-600 font-bold ml-1" for="verifyCode">Phone</label>
