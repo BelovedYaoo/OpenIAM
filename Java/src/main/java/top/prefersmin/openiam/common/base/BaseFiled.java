@@ -29,7 +29,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)})
 public class BaseFiled implements Serializable {
 
@@ -76,15 +76,17 @@ public class BaseFiled implements Serializable {
      * 派生类方法在调用基类setter时会传递基类类型对象<p>
      * 此方法用于将基类类型对象转换为指定的派生类类型对象<p>
      * 请通过上下文确保类型一致
+     *
      * @param clazz 需要转换的派生类类型
+     * @param <T>   派生类类型
+     *
      * @return 转换后的派生类类型对象
-     * @param <T> 派生类类型
      */
     public <T extends BaseFiled> T convertToSubclass(Class<T> clazz) {
         if (clazz.isInstance(this)) {
             return clazz.cast(this);
         } else {
-            throw new IllegalArgumentException(clazz.getSimpleName()+"与预期的类型不一致，请检查");
+            throw new IllegalArgumentException(clazz.getSimpleName() + "与预期的类型不一致，请检查");
         }
     }
 

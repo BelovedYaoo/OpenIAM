@@ -63,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // 封禁逻辑
-        StpUtil.checkDisable(account.getBaseId());
+        StpUtil.checkDisable(account.baseId());
 
         // Sa-Token登录
         StpUtil.login(accountData.openId(), SaLoginConfig.setExtra("openId", accountData.openId()).setDevice("Default"));

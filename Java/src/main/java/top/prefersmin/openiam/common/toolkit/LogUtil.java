@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogUtil.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(LogUtil.class);
 
     public static void info(String message) {
         LOGGER.info(message);
