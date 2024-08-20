@@ -30,10 +30,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // AspectJ
-    implementation 'org.aspectj:aspectjrt:1.8.13'
+    implementation 'org.aspectj:aspectjrt:1.9.19'
 
     // AspectJ Weaver
-    implementation 'org.aspectj:aspectjweaver:1.9.7'
+    implementation 'org.aspectj:aspectjweaver:1.9.19'
+    annotationProcessor 'org.aspectj:aspectjweaver:1.9.19'
 
     // MySQL Driver
     runtimeOnly 'com.mysql:mysql-connector-j'
