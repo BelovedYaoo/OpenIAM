@@ -22,7 +22,7 @@ service.interceptors.request.use(
         if (tokenValue !== '' && tokenValue !== null && tokenValue !== undefined) {
             config.headers['token'] = tokenValue;
         }
-        config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        config.headers['Content-Type'] = 'application/json';
         return config;
     },
     (err) => {

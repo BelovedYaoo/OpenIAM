@@ -1,16 +1,18 @@
 package top.belovedyaoo.openiam.permission.controller;
 
+import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.context.model.SaRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
 import top.belovedyaoo.openiam.common.base.result.Result;
 import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.service.impl.AccountServiceImpl;
 import top.belovedyaoo.openiam.permission.service.impl.AuthenticationServiceImpl;
+import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
 
 import static top.belovedyaoo.openiam.permission.service.impl.AuthenticationServiceImpl.VERIFY_CODE_PREFIX;
 
@@ -21,8 +23,8 @@ import static top.belovedyaoo.openiam.permission.service.impl.AuthenticationServ
  * @version 1.3
  */
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     /**
@@ -42,20 +44,22 @@ public class AuthenticationController {
     @PostMapping("/test2")
     public Account test2() {
         Account account = Account.builder()
-                .baseId("123123")
+                .baseId("111")
+                .openId("222")
                 .build();
-        account.openId("123123121231233123");
         System.out.println(account);
         accountService.save(Account.builder()
                 .openId("123")
-                .password("012e36e1e55a4c3bab6845b3438f8aff")
+                .password("YTY2NWE0NTkyMDQyMmY5ZDQxN2U0ODY3ZWZkYzRmYjhhMDRhMWYzZmZmMWZhMDdlOTk4ZTg2ZjdmN2EyN2FlMw==")
                 .email("belovedyaoo@qq.com")
                 .build());
         return account;
     }
 
     @PostMapping("/test3")
-    public Account test3(Account account) {
+    public Account test3(@RequestBody Account account) {
+        SaRequest req = SaHolder.getRequest();
+        req.getParamMap().forEach((k, v) -> System.out.println(k + ":" + v));
         System.out.println(account);
         account.baseId("111");
         return account;
@@ -69,7 +73,7 @@ public class AuthenticationController {
      * @return 登录结果
      */
     @PostMapping("/accountLogin")
-    public Result accountLogin(@ModelAttribute Account account) {
+    public Result accountLogin(@RequestBody Account account) {
         System.out.println(account);
         return authenticationService.accountLogin(account);
     }
@@ -82,7 +86,7 @@ public class AuthenticationController {
      * @return 注册结果
      */
     @PostMapping("/accountRegister")
-    public Result accountRegister(@ModelAttribute Account account, @RequestParam(value = "usePhone") boolean usePhone, @RequestParam(value = "verifyCode") String verifyCode) {
+    public Result accountRegister(@RequestParam(value = "usePhone") boolean usePhone, @RequestParam(value = "verifyCode") String verifyCode, @RequestBody Account account) {
         return authenticationService.accountRegister(account, usePhone, verifyCode);
     }
 
@@ -94,7 +98,7 @@ public class AuthenticationController {
      * @return 生成结果
      */
     @PostMapping("/getVerifyCode")
-    public Result getVerifyCode(@ModelAttribute Account account, @RequestParam(value = "usePhone") boolean usePhone) {
+    public Result getVerifyCode(@RequestParam(value = "usePhone") boolean usePhone, @RequestBody Account account) {
         return authenticationUtil.codeVerify(VERIFY_CODE_PREFIX, usePhone ? account.phone() : account.email());
     }
 

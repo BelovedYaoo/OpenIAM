@@ -3,16 +3,16 @@ package top.belovedyaoo.openiam.permission.entity;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mybatisflex.annotation.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import top.belovedyaoo.openiam.common.base.BaseFiled;
 import top.belovedyaoo.openiam.common.annotations.Sensitization;
 import top.belovedyaoo.openiam.common.annotations.SensitizationType;
+import top.belovedyaoo.openiam.common.base.BaseFiled;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 @Data
 @SuperBuilder
-@AllArgsConstructor
+@NoArgsConstructor
 @ToString(callSuper = true)
 @Getter(onMethod_ = @JsonGetter)
 @EqualsAndHashCode(callSuper = true)

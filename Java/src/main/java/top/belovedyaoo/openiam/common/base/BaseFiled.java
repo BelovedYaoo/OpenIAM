@@ -12,7 +12,6 @@ import com.tangzc.autotable.annotation.PrimaryKey;
 import com.tangzc.mybatisflex.annotation.InsertFillData;
 import com.tangzc.mybatisflex.annotation.InsertFillTime;
 import com.tangzc.mybatisflex.annotation.InsertUpdateFillTime;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,16 +24,20 @@ import java.util.Date;
 
 /**
  * 基础字段
+ * Data注解用于提供各属性的Getter、Setter、equals、hashCode、canEqual、toString方法
+ * SuperBuilder注解用于协同构造派生类，缺失会导致构造派生类时无法同时设置基类与派生类属性
+ * Getter注解用于Jackson的反序列化，缺失会导致拿不到BaseFiled的属性
+ * NoArgsConstructor注解用于提供无参构造方法，缺失会导致派生类中报错
+ * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.1
+ * @version 1.2
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true, fluent = true)
 @Getter(onMethod_ = @JsonGetter)
+@Accessors(fluent = true, chain = true)
 public class BaseFiled implements Serializable {
 
     /**

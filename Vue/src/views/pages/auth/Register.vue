@@ -73,14 +73,16 @@ const registerAccount = () => {
     request({
         method: 'POST',
         url: '/auth/accountRegister',
-        data: {
+        params: {
             usePhone: usePhone.value,
             verifyCode: verifyCode.value,
+        },
+        data: {
             openId: openId.value,
             password: btoa(SHA256(password.value).toString()),
             phone: phone.value,
             email: email.value
-        }
+        },
     }).then((response) => {
         toast.add(responseToastConfig(response));
     });
@@ -112,8 +114,10 @@ const getVerifyCode = () => {
     request({
         method: 'POST',
         url: '/auth/getVerifyCode',
-        data: {
+        params: {
             usePhone: usePhone.value,
+        },
+        data: {
             phone: phone.value,
             email: email.value
         }
