@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.base;
+package top.belovedyaoo.openiam.common.core.base;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import top.belovedyaoo.openiam.common.processor.BaseIdAutoFillProcessor;
 
 import java.io.Serializable;
 import java.util.Date;

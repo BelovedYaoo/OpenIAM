@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.processor;
+package top.belovedyaoo.openiam.common.core.base;
 
 import cn.hutool.core.util.IdUtil;
 import com.tangzc.mybatisflex.annotation.handler.AutoFillHandler;

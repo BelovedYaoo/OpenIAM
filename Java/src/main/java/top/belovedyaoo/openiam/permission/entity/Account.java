@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import top.belovedyaoo.openiam.common.annotations.Sensitization;
-import top.belovedyaoo.openiam.common.annotations.SensitizationType;
-import top.belovedyaoo.openiam.common.base.BaseFiled;
+import top.belovedyaoo.openiam.common.core.sensitization.Sensitization;
+import top.belovedyaoo.openiam.common.core.sensitization.SensitizationType;
+import top.belovedyaoo.openiam.common.core.base.BaseFiled;
 
 import java.io.Serializable;
 

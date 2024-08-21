@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.base.result;
+package top.belovedyaoo.openiam.common.core.result;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;

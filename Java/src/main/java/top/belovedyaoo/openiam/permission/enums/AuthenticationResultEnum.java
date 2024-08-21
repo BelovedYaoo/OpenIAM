@@ -2,7 +2,7 @@ package top.belovedyaoo.openiam.permission.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import top.belovedyaoo.openiam.common.base.result.ResultType;
+import top.belovedyaoo.openiam.common.core.result.ResultType;
 
 /**
  * 认证结果枚举类

@@ -1,8 +1,7 @@
-package top.belovedyaoo.openiam.common.annotations;
+package top.belovedyaoo.openiam.common.core.sensitization;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import top.belovedyaoo.openiam.common.serializer.SensitiveInfoSerializer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

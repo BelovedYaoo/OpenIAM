@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.base.result;
+package top.belovedyaoo.openiam.common.core.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
