@@ -28,7 +28,12 @@ import java.util.Set;
  * @version 1.2
  */
 @Component
-public class JedisPoolUtil {
+public class JedisOperateUtil {
+
+    /**
+     * 默认分隔符
+     */
+    public static final String REDIS_SEPARATOR = ":";
 
     /**
      * 默认成功返回值
@@ -103,6 +108,26 @@ public class JedisPoolUtil {
      */
     public static int setEx(String key, String value) {
         return setEx(key, value, DEFAULT_SETEX_TIMEOUT);
+    }
+
+    /**
+     * 缓存一个字符串值到Redis缓存中，设定指定的过期时间。
+     *
+     * @param value   缓存的值，类型为String。
+     * @param timeout 缓存的过期时间，单位为秒。
+     * @param keys    缓存的键列表，类型为String。
+     *
+     * @return int 返回操作的结果，成功返回1，失败返回0。
+     */
+    public static int setEx(String value, int timeout, String... keys) {
+        StringBuilder keyBuilder = new StringBuilder();
+        for (String key : keys) {
+            if (!keyBuilder.isEmpty()) {
+                keyBuilder.append(REDIS_SEPARATOR);
+            }
+            keyBuilder.append(key);
+        }
+        return setEx(keyBuilder.toString(), value, timeout);
     }
 
     /**
@@ -714,6 +739,24 @@ public class JedisPoolUtil {
         } finally {
             returnJedis(jedis);
         }
+    }
+
+    /**
+     * 将多个key的值拼接并从Redis中获取
+     *
+     * @param keys key列表
+     *
+     * @return 如果key存在且对应的value不为空，则返回该value的字符串形式；如果key不存在或者value为空，则返回null。
+     */
+    public static String get(String... keys) {
+        StringBuilder keyBuilder = new StringBuilder();
+        for (String key : keys) {
+            if (!keyBuilder.isEmpty()) {
+                keyBuilder.append(REDIS_SEPARATOR);
+            }
+            keyBuilder.append(key);
+        }
+        return get(keyBuilder.toString());
     }
 
     /**
