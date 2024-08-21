@@ -57,12 +57,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/test3")
-    public Account test3(@RequestBody Account account) {
+    public Result test3(@RequestBody Account account) {
         SaRequest req = SaHolder.getRequest();
         req.getParamMap().forEach((k, v) -> System.out.println(k + ":" + v));
         System.out.println(account);
         account.baseId("111");
-        return account;
+        return Result.success().data("account", account);
     }
 
     /**

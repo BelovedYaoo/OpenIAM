@@ -9,7 +9,7 @@ import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
 import top.belovedyaoo.openiam.common.base.result.Result;
 import top.belovedyaoo.openiam.permission.enums.AuthenticationResultEnum;
-import top.belovedyaoo.openiam.common.toolkit.JedisPoolUtil;
+import top.belovedyaoo.openiam.common.toolkit.JedisOperateUtil;
 import top.belovedyaoo.openiam.permission.service.AuthenticationService;
 
 import static cn.hutool.core.util.ObjectUtil.isNull;
@@ -111,7 +111,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         accountService.save(accountData);
 
         // 清除验证码
-        JedisPoolUtil.del(VERIFY_CODE_PREFIX + ":" + (usePhone ? accountData.phone() : accountData.email()));
+        JedisOperateUtil.del(VERIFY_CODE_PREFIX + ":" + (usePhone ? accountData.phone() : accountData.email()));
 
         return Result.success().description("注册成功");
 
