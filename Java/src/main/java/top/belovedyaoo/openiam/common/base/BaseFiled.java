@@ -23,11 +23,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 基础字段
- * Data注解用于提供各属性的Getter、Setter、equals、hashCode、canEqual、toString方法
- * SuperBuilder注解用于协同构造派生类，缺失会导致构造派生类时无法同时设置基类与派生类属性
- * Getter注解用于Jackson的反序列化，缺失会导致拿不到BaseFiled的属性
- * NoArgsConstructor注解用于提供无参构造方法，缺失会导致派生类中报错
+ * 基础字段<p>
+ * Data注解用于提供各属性的Getter、Setter、equals、hashCode、canEqual、toString方法<p>
+ * SuperBuilder注解用于协同构造派生类，缺失会导致构造派生类时无法同时设置基类与派生类属性<p>
+ * Getter注解用于Jackson的反序列化，缺失会导致拿不到BaseFiled的属性<p>
+ * NoArgsConstructor注解用于提供无参构造方法，缺失会导致派生类中报错<p>
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
@@ -55,7 +55,7 @@ public class BaseFiled implements Serializable {
      * 创建时间
      */
     @InsertFillTime
-    @ColumnComment("创建时间")
+    @ColumnComment("数据的创建时间")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date createTime;
 
@@ -63,7 +63,7 @@ public class BaseFiled implements Serializable {
      * 更新时间
      */
     @InsertUpdateFillTime
-    @ColumnComment("更新时间")
+    @ColumnComment("数据最近一次的更新时间")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date updateTime;
 
@@ -71,20 +71,20 @@ public class BaseFiled implements Serializable {
      * 禁用状态
      */
     @ColumnDefault("0")
-    @ColumnComment("禁用状态")
+    @ColumnComment("数据的禁用状态")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Boolean isDisabled;
 
     /**
      * 逻辑删除
      */
-    @ColumnComment("逻辑删除")
+    @ColumnComment("不为null的情况表示数据的删除时间")
     @Column(isLogicDelete = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date deletedAt;
 
     /**
-     * 派生类方法在调用基类setter时会传递基类类型对象<p>
+     * 派生类方法在调用基类Setter时会传递基类类型对象<p>
      * 此方法用于将基类类型对象转换为指定的派生类类型对象<p>
      * 请通过上下文确保类型一致
      *
@@ -93,7 +93,7 @@ public class BaseFiled implements Serializable {
      *
      * @return 转换后的派生类类型对象
      */
-    public <T extends BaseFiled> T convertToSubclass(Class<T> clazz) {
+    public <T extends BaseFiled> T convertTo(Class<T> clazz) {
         if (clazz.isInstance(this)) {
             return clazz.cast(this);
         } else {

@@ -10,7 +10,7 @@ spring:
         # NON_DEFAULT    如果字段是默认值，就不会被序列化
         # CUSTOM         此时要指定valueFilter属性，该属性对应一个类，用来自定义判断被JsonInclude修饰的字段是否序列化
         # USE_DEFAULTS   当JsonInclude在类和属性上都有时，优先使用属性上的注解，此时如果在序列化的get方法上使用了JsonInclude，并设置为USE_DEFAULTS，就会使用类注解的设置
-#        default-property-inclusion: non_empty
+        default-property-inclusion: non_empty
         # 设置日期格式
         date-format: yyyy-MM-dd HH:mm:ss
         time-zone: GMT+8
