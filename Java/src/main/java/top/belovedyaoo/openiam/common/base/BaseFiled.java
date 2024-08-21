@@ -56,7 +56,7 @@ public class BaseFiled implements Serializable {
      */
     @InsertFillTime
     @ColumnComment("创建时间")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date createTime;
 
     /**
@@ -64,7 +64,7 @@ public class BaseFiled implements Serializable {
      */
     @InsertUpdateFillTime
     @ColumnComment("更新时间")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date updateTime;
 
     /**
@@ -72,7 +72,7 @@ public class BaseFiled implements Serializable {
      */
     @ColumnDefault("0")
     @ColumnComment("禁用状态")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Boolean isDisabled;
 
     /**
@@ -80,7 +80,7 @@ public class BaseFiled implements Serializable {
      */
     @ColumnComment("逻辑删除")
     @Column(isLogicDelete = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date deletedAt;
 
     /**
