@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import top.belovedyaoo.openiam.common.core.result.Result;
+import top.belovedyaoo.openiam.core.result.Result;
 import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.service.impl.AccountServiceImpl;
 import top.belovedyaoo.openiam.permission.service.impl.AuthenticationServiceImpl;

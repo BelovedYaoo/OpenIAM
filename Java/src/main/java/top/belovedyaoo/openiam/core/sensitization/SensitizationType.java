@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.core.sensitization;
+package top.belovedyaoo.openiam.core.sensitization;
 
 /**
  * 数据脱敏类型

@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.core.sensitization;
+package top.belovedyaoo.openiam.core.sensitization;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.StrUtil;

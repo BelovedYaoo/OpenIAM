@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
-import top.belovedyaoo.openiam.common.core.result.Result;
+import top.belovedyaoo.openiam.core.result.Result;
 import top.belovedyaoo.openiam.permission.enums.AuthenticationResultEnum;
 import top.belovedyaoo.openiam.common.toolkit.JedisOperateUtil;
 import top.belovedyaoo.openiam.permission.service.AuthenticationService;

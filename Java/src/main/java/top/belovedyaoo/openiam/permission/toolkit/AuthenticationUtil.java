@@ -3,7 +3,7 @@ package top.belovedyaoo.openiam.permission.toolkit;
 import cn.hutool.core.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import top.belovedyaoo.openiam.common.core.result.Result;
+import top.belovedyaoo.openiam.core.result.Result;
 import top.belovedyaoo.openiam.common.toolkit.JedisOperateUtil;
 import top.belovedyaoo.openiam.common.toolkit.LogUtil;
 import top.belovedyaoo.openiam.permission.enums.AuthenticationResultEnum;

@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.core.eo;
+package top.belovedyaoo.openiam.core.eo;
 
 import com.tangzc.mybatisflex.annotation.DefaultValue;
 import com.tangzc.mybatisflex.annotation.FieldFill;

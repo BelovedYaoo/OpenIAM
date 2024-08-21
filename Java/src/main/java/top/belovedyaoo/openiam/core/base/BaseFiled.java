@@ -1,4 +1,4 @@
-package top.belovedyaoo.openiam.common.core.base;
+package top.belovedyaoo.openiam.core.base;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
