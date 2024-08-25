@@ -49,6 +49,8 @@ export default [
             }],
             // 对象属性简写检查，禁止使用对象属性简写
             'object-shorthand': ['error', 'never'],
+            // require检查，禁止使用require
+            '@typescript-eslint/no-require-imports': 'error',
             // 引号检查，引号必须使用单引号
             'quotes': ['error', 'single'],
             // 声明检查，从未覆写的变量必须使用const
