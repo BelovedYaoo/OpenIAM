@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { SHA256 } from 'crypto-js';
 import axios from 'axios';
 import cookie from 'js-cookie';
+import { sha256 } from 'hash.js';
 import { addClassById, globalConfig, responseToastConfig } from '@/service/globalQuote';
 import request from '@/service/request';
 import router from '@/service/router';
@@ -57,7 +57,7 @@ const login = () => {
         url: '/auth/accountLogin',
         data: {
             openId: openId.value,
-            password: btoa(SHA256(password.value).toString())
+            password: btoa(sha256().update(password.value).digest('hex'))
         }
     }).then((res) => {
         toast.add(responseToastConfig(res));

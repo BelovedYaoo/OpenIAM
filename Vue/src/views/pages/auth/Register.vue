@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
-import { SHA256 } from 'crypto-js';
+import { sha256 } from 'hash.js';
 import { addClassById, globalConfig, responseToastConfig } from '@/service/globalQuote';
 import request from '@/service/request';
 import LogoSvg from '@/components/LogoSvg.vue';
@@ -79,7 +79,7 @@ const registerAccount = () => {
         },
         data: {
             openId: openId.value,
-            password: btoa(SHA256(password.value).toString()),
+            password: btoa(sha256().update(password.value).digest('hex')),
             phone: phone.value,
             email: email.value
         },
