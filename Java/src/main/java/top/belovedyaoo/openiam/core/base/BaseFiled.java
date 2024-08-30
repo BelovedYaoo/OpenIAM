@@ -9,6 +9,7 @@ import com.tangzc.autotable.annotation.ColumnDefault;
 import com.tangzc.autotable.annotation.ColumnNotNull;
 import com.tangzc.autotable.annotation.ColumnType;
 import com.tangzc.autotable.annotation.PrimaryKey;
+import com.tangzc.autotable.annotation.mysql.MysqlTypeConstant;
 import com.tangzc.mybatisflex.annotation.InsertFillData;
 import com.tangzc.mybatisflex.annotation.InsertFillTime;
 import com.tangzc.mybatisflex.annotation.InsertUpdateFillTime;
@@ -30,7 +31,7 @@ import java.util.Date;
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.2
+ * @version 1.3
  */
 @Data
 @SuperBuilder
@@ -54,6 +55,7 @@ public class BaseFiled implements Serializable {
      * 创建时间
      */
     @InsertFillTime
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @ColumnComment("数据的创建时间")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date createTime;
@@ -62,6 +64,7 @@ public class BaseFiled implements Serializable {
      * 更新时间
      */
     @InsertUpdateFillTime
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @ColumnComment("数据最近一次的更新时间")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date updateTime;
@@ -77,8 +80,9 @@ public class BaseFiled implements Serializable {
     /**
      * 逻辑删除
      */
-    @ColumnComment("不为null的情况表示数据的删除时间")
     @Column(isLogicDelete = true)
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
+    @ColumnComment("不为NULL的情况表示数据的删除时间")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date deletedAt;
 
