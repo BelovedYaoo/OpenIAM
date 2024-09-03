@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import top.belovedyaoo.openiam.core.log.InterfaceLog;
 import top.belovedyaoo.openiam.core.result.Result;
 import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.service.impl.AccountServiceImpl;
@@ -20,7 +21,7 @@ import static top.belovedyaoo.openiam.permission.service.impl.AuthenticationServ
  * 认证控制层
  *
  * @author BelovedYaoo
- * @version 1.3
+ * @version 1.4
  */
 @RestController
 @RequestMapping("/auth")
@@ -42,6 +43,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/test2")
+    @InterfaceLog(identifierCode = "abc", interfaceDesc = "测试接口日志注解", interfaceName = "test2")
     public Account test2() {
         Account account = Account.builder()
                 .baseId("111")
@@ -57,6 +59,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/test3")
+    @InterfaceLog(identifierCode = "abc333", interfaceDesc = "测试接口日志注解3", interfaceName = "test3")
     public Result test3(@RequestBody Account account) {
         SaRequest req = SaHolder.getRequest();
         req.getParamMap().forEach((k, v) -> System.out.println(k + ":" + v));
@@ -86,7 +89,7 @@ public class AuthenticationController {
      * @return 注册结果
      */
     @PostMapping("/accountRegister")
-    public Result accountRegister(@RequestParam(value = "usePhone") boolean usePhone, @RequestParam(value = "verifyCode") String verifyCode, @RequestBody Account account) {
+    public Result accountRegister(@RequestBody Account account, @RequestParam(value = "usePhone") boolean usePhone, @RequestParam(value = "verifyCode") String verifyCode) {
         return authenticationService.accountRegister(account, usePhone, verifyCode);
     }
 
@@ -98,7 +101,7 @@ public class AuthenticationController {
      * @return 生成结果
      */
     @PostMapping("/getVerifyCode")
-    public Result getVerifyCode(@RequestParam(value = "usePhone") boolean usePhone, @RequestBody Account account) {
+    public Result getVerifyCode(@RequestBody Account account, @RequestParam(value = "usePhone") boolean usePhone) {
         return authenticationUtil.codeVerify(VERIFY_CODE_PREFIX, usePhone ? account.phone() : account.email());
     }
 

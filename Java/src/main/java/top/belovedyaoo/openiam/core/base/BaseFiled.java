@@ -41,32 +41,32 @@ import java.util.Date;
 public class BaseFiled implements Serializable {
 
     /**
-     * 内部ID
+     * 基础ID
      */
     @Id
-    @PrimaryKey(value = false)
-    @ColumnType(length = 32)
     @ColumnNotNull
+    @PrimaryKey(value = false)
     @ColumnComment("基础ID,仅系统内部使用")
+    @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 32)
     @InsertFillData(BaseIdAutoFillProcessor.class)
     protected String baseId;
 
     /**
      * 创建时间
      */
-    @InsertFillTime
-    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @ColumnComment("数据的创建时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @InsertFillTime
     protected Date createTime;
 
     /**
      * 更新时间
      */
-    @InsertUpdateFillTime
-    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @ColumnComment("数据最近一次的更新时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @InsertUpdateFillTime
     protected Date updateTime;
 
     /**
@@ -74,6 +74,7 @@ public class BaseFiled implements Serializable {
      */
     @ColumnDefault("0")
     @ColumnComment("数据的禁用状态")
+    @ColumnType(value = MysqlTypeConstant.BIT, length = 1)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Boolean isDisabled;
 
@@ -81,8 +82,8 @@ public class BaseFiled implements Serializable {
      * 逻辑删除
      */
     @Column(isLogicDelete = true)
-    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @ColumnComment("不为NULL的情况表示数据的删除时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected Date deletedAt;
 
