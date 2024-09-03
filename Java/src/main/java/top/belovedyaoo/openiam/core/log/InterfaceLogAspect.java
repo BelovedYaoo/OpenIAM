@@ -20,8 +20,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -57,14 +57,12 @@ public class InterfaceLogAspect {
      */
     @Before(value = "interfaceLogAspect()")
     public void recordLog(JoinPoint joinPoint) {
-        System.out.println("触发！");
-        // 开始时间
-        long beginTime = Instant.now().toEpochMilli();
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         interfaceLogPO.operatorId(StpUtil.getLoginId("-1"))
                 .requestUrl(URLUtil.getPath(request.getRequestURI()))
                 .requestIp(ServletUtil.getClientIP(request))
-                .methodName(request.getMethod());
+                .methodName(request.getMethod())
+                .startTime(new Date());
         // 获取执行的方法名
         interfaceLogPO.methodName(joinPoint.getSignature().getName());
         // 取出执行方法上的InterfaceLog注解中的businessType
@@ -74,7 +72,7 @@ public class InterfaceLogAspect {
             // 从方法签名中获取到方法对象
             Method method = methodSignature.getMethod();
             // 从方法对象获取特定的注解
-            InterfaceLog interfaceLog =  method.getAnnotation(InterfaceLog.class);
+            InterfaceLog interfaceLog = method.getAnnotation(InterfaceLog.class);
 
             if (interfaceLog != null) {
                 interfaceLogPO.businessTypes(interfaceLog.businessType());
@@ -86,8 +84,6 @@ public class InterfaceLogAspect {
         // 参数
         interfaceLogPO.params(Arrays.toString(joinPoint.getArgs()));
         // sysLogPO.setDescription(LogUtil.getControllerMethodDescription(joinPoint));
-        long endTime = Instant.now().toEpochMilli();
-        interfaceLogPO.consumingTime(endTime - beginTime);
     }
 
     /**
@@ -95,12 +91,13 @@ public class InterfaceLogAspect {
      */
     @AfterReturning(returning = "ret", pointcut = "interfaceLogAspect()")
     public void doAfterReturning(Object ret) {
-        interfaceLogPO.result(ret.toString());
+        interfaceLogPO.result(ret.toString())
+                .finishTime(new Date());
         // 处理完请求，返回内容
         // R r = Convert.convert(R.class, ret);
         // if (r.getCode() == 200) {
         //     正常返回
-            // sysLogPO.setType(1);
+        // sysLogPO.setType(1);
         // } else {
         //     sysLogPO.setType(2);
         //     sysLogPO.setExDetail(r.getMsg());

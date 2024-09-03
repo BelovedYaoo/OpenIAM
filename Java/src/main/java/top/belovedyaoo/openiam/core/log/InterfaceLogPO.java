@@ -62,22 +62,6 @@ public class InterfaceLogPO {
     private BusinessType[] businessTypes;
 
     /**
-     * 执行时间
-     */
-    @ColumnNotNull
-    @ColumnComment("请求开始执行的时间")
-    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
-    protected Date operationTime;
-
-    /**
-     * 请求IP地址
-     */
-    @ColumnNotNull
-    @ColumnComment("每条日志记录的请求IP地址")
-    @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 50)
-    private String requestIp;
-
-    /**
      * 请求接口路径
      */
     @ColumnNotNull
@@ -100,7 +84,6 @@ public class InterfaceLogPO {
     @ColumnType(value = MysqlTypeConstant.TEXT)
     private String description;
 
-
     /**
      * 方法入参
      */
@@ -116,11 +99,28 @@ public class InterfaceLogPO {
     private String result;
 
     /**
-     * 方法执行时间
+     * 执行时间
      */
-    @ColumnComment("每条日志记录的方法执行时间,单位毫秒")
-    @ColumnType(value = MysqlTypeConstant.INT)
-    private Long consumingTime;
+    @ColumnNotNull
+    @ColumnComment("请求方法开始执行的时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
+    protected Date startTime;
+
+    /**
+     * 方法结束时间
+     */
+    @ColumnNotNull
+    @ColumnComment("请求方法执行完成的时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
+    private Date finishTime;
+
+    /**
+     * 请求IP地址
+     */
+    @ColumnNotNull
+    @ColumnComment("每条日志记录的请求IP地址")
+    @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 50)
+    private String requestIp;
 
     /**
      * 异常情况
