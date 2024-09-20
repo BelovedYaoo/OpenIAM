@@ -81,4 +81,12 @@ public class Result {
         return this;
     }
 
+    public static Result tryConvert(Object obj) {
+        if (obj instanceof Result result) {
+            return result;
+        } else {
+            return new Result();
+        }
+    }
+
 }

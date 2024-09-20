@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.belovedyaoo.openiam.core.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ public class InterfaceLogAspect {
 
     }
 
-    /***
+    /**
      * 拦截控制层的操作日志
      */
     @Before(value = "interfaceLogAspect()")
@@ -61,29 +62,21 @@ public class InterfaceLogAspect {
         interfaceLogPO.operatorId(StpUtil.getLoginId("-1"))
                 .requestUrl(URLUtil.getPath(request.getRequestURI()))
                 .requestIp(ServletUtil.getClientIP(request))
-                .methodName(request.getMethod())
-                .startTime(new Date());
-        // 获取执行的方法名
-        interfaceLogPO.methodName(joinPoint.getSignature().getName());
-        // 取出执行方法上的InterfaceLog注解中的businessType
+                .methodName(joinPoint.getSignature().getName())
+                .startTime(new Date())
+                .params(Arrays.toString(joinPoint.getArgs()));
         // 从JoinPoint获取方法签名
         Signature signature = joinPoint.getSignature();
         if (signature instanceof MethodSignature methodSignature) {
             // 从方法签名中获取到方法对象
             Method method = methodSignature.getMethod();
-            // 从方法对象获取特定的注解
+            // 取出执行方法上的InterfaceLog注解中的信息
             InterfaceLog interfaceLog = method.getAnnotation(InterfaceLog.class);
-
             if (interfaceLog != null) {
                 interfaceLogPO.businessTypes(interfaceLog.businessType());
                 interfaceLogPO.description(interfaceLog.interfaceDesc());
             }
         }
-        // 类名
-        // sysLogPO.setClassPath(joinPoint.getTarget().getClass().getName());
-        // 参数
-        interfaceLogPO.params(Arrays.toString(joinPoint.getArgs()));
-        // sysLogPO.setDescription(LogUtil.getControllerMethodDescription(joinPoint));
     }
 
     /**
@@ -91,10 +84,10 @@ public class InterfaceLogAspect {
      */
     @AfterReturning(returning = "ret", pointcut = "interfaceLogAspect()")
     public void doAfterReturning(Object ret) {
-        interfaceLogPO.result(ret.toString())
+        Result result = Result.tryConvert(ret);
+        interfaceLogPO.result(result.toString())
                 .finishTime(new Date());
         // 处理完请求，返回内容
-        // R r = Convert.convert(R.class, ret);
         // if (r.getCode() == 200) {
         //     正常返回
         // sysLogPO.setType(1);
