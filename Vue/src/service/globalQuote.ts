@@ -4,14 +4,14 @@ import { ToastMessageOptions } from 'primevue/toast';
 /**
  * 将Axios请求响应体转换为PrimeVue的Toast配置
  * @param response Axios响应体
- * @param life Toast显示时长(默认3秒)
+ * @param duringSecond Toast显示时长(默认3秒)
  */
-export const responseToastConfig = (response: AxiosResponse<any>, life: number = 3000): ToastMessageOptions => {
+export const responseToastConfig = (response: AxiosResponse<any>, duringSecond: number = 3): ToastMessageOptions => {
     return {
         severity: response.data.code === 200 ? 'success' : 'error',
         summary: response.data.message,
         detail: response.data.description,
-        life: life
+        life: duringSecond * 1000
     };
 };
 
