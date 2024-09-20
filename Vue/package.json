@@ -23,6 +23,7 @@
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.1.2",
+        "code-inspector-plugin": "^0.16.1",
         "eslint": "^9.9.0",
         "eslint-plugin-vue": "^9.27.0",
         "globals": "^15.9.0",
