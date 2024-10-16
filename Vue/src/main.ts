@@ -105,8 +105,12 @@ import './assets/styles.scss';
 //全局函数模块
 import globalQuotePlugin from './service/globalQuotePlugin.ts';
 
-const app = createApp(App);
+import { createPinia } from 'pinia'
 
+const app = createApp(App);
+const pinia = createPinia()
+
+app.use(pinia)
 app.use(router);
 app.use(PrimeVue, {ripple: true});
 app.use(ToastService);
