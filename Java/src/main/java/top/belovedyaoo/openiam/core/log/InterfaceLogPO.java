@@ -31,7 +31,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter(onMethod_ = @JsonGetter)
 @Accessors(chain = true, fluent = true)
-@Table(value = "interface_log", dataSource = "log")
+@Table(value = "interface_log", dataSource = "primary")
 public class InterfaceLogPO {
 
     /**

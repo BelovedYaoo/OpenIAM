@@ -43,31 +43,11 @@ spring:
 mybatis-flex:
     datasource:
         # 数据数据库
-        data:
+        primary:
             # 数据源类型
             type: com.mysql.cj.jdbc.MysqlDataSource
             # 数据库连接地址
-            url: jdbc:mysql://localhost:3307/openiam_data
-            # 数据库用户名 & 密码
-            user: root
-            password: root
-
-        # 权限数据库
-        permission:
-            # 数据源类型
-            type: com.mysql.cj.jdbc.MysqlDataSource
-            # 数据库连接地址
-            url: jdbc:mysql://localhost:3307/openiam_permission
-            # 数据库用户名 & 密码
-            user: root
-            password: root
-
-        # 日志数据库
-        log:
-            # 数据源类型
-            type: com.mysql.cj.jdbc.MysqlDataSource
-            # 数据库连接地址
-            url: jdbc:mysql://localhost:3307/openiam_log
+            url: jdbc:mysql://localhost:3307/openiam
             # 数据库用户名 & 密码
             user: root
             password: root
@@ -99,6 +79,20 @@ sa-token:
     token-style: uuid
     # 是否输出操作日志
     is-log: false
+    # OAuth2.0 配置
+    oauth2-server:
+        # 是否全局开启授权码模式
+        enable-authorization-code: true
+        # 是否全局开启 Implicit 模式
+        enable-implicit: true
+        # 是否全局开启密码模式
+        enable-password: true
+        # 是否全局开启客户端模式
+        enable-client-credentials: true
+        # 定义哪些 scope 是高级权限，多个用逗号隔开
+        # higher-scope: openid,userid
+        # 定义哪些 scope 是低级权限，多个用逗号隔开
+        # lower-scope: userinfo
 
 auto-table:
     # 是否开启自动建表功能

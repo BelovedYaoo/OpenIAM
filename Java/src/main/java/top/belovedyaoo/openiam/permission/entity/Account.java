@@ -33,7 +33,7 @@ import java.io.Serializable;
 @Getter(onMethod_ = @JsonGetter)
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true, fluent = true)
-@Table(value = "account", dataSource = "permission")
+@Table(value = "account", dataSource = "primary")
 public class Account extends BaseFiled implements Serializable {
 
     /**
