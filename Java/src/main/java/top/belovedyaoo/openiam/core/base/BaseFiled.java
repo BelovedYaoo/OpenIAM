@@ -8,7 +8,9 @@ import com.tangzc.autotable.annotation.ColumnComment;
 import com.tangzc.autotable.annotation.ColumnDefault;
 import com.tangzc.autotable.annotation.ColumnNotNull;
 import com.tangzc.autotable.annotation.ColumnType;
+import com.tangzc.autotable.annotation.Index;
 import com.tangzc.autotable.annotation.PrimaryKey;
+import com.tangzc.autotable.annotation.enums.IndexTypeEnum;
 import com.tangzc.autotable.annotation.mysql.MysqlTypeConstant;
 import com.tangzc.mybatisflex.annotation.InsertFillData;
 import com.tangzc.mybatisflex.annotation.InsertFillTime;
@@ -31,7 +33,7 @@ import java.util.Date;
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.3
+ * @version 1.4
  */
 @Data
 @SuperBuilder
@@ -47,6 +49,7 @@ public class BaseFiled implements Serializable {
     @ColumnNotNull
     @PrimaryKey(value = false)
     @ColumnComment("基础ID,仅系统内部使用")
+    @Index(type = IndexTypeEnum.UNIQUE)
     @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 32)
     @InsertFillData(BaseIdAutoFillProcessor.class)
     protected String baseId;
