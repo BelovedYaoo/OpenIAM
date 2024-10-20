@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.tangzc.autotable.annotation.ColumnComment;
-import com.tangzc.autotable.annotation.ColumnDefault;
 import com.tangzc.autotable.annotation.ColumnNotNull;
 import com.tangzc.autotable.annotation.ColumnType;
 import com.tangzc.autotable.annotation.Index;
@@ -33,7 +32,7 @@ import java.util.Date;
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.4
+ * @version 1.5
  */
 @Data
 @SuperBuilder
@@ -75,11 +74,10 @@ public class BaseFiled implements Serializable {
     /**
      * 禁用状态
      */
-    @ColumnDefault("0")
-    @ColumnComment("数据的禁用状态")
-    @ColumnType(value = MysqlTypeConstant.BIT, length = 1)
+    @ColumnComment("不为NULL的情况表示数据的禁用时间")
+    @ColumnType(value = MysqlTypeConstant.DATETIME, length = 3)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    protected Boolean isDisabled;
+    protected Date disabledAt;
 
     /**
      * 逻辑删除
@@ -106,6 +104,29 @@ public class BaseFiled implements Serializable {
         } else {
             throw new IllegalArgumentException(clazz.getSimpleName() + "与预期的类型不一致，请检查");
         }
+    }
+
+    /**
+     * 判断是否禁用
+     *
+     * @return 数据的禁用状态
+     */
+    public boolean isDisabled() {
+        return this.disabledAt != null;
+    }
+
+    /**
+     * 禁用
+     */
+    public void ban() {
+        this.disabledAt = new Date();
+    }
+
+    /**
+     * 解禁
+     */
+    public void unban() {
+        this.disabledAt = null;
     }
 
 }
