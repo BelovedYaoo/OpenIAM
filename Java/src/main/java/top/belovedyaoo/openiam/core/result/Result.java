@@ -1,6 +1,7 @@
 package top.belovedyaoo.openiam.core.result;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Map;
  * 返回结果统一封装类
  *
  * @author BelovedYaoo
- * @version 1.2
+ * @version 1.3
  */
 @Data
 @NoArgsConstructor
@@ -44,7 +45,13 @@ public class Result {
     /**
      * 返回数据
      */
-    private Map<String, Object> data = new HashMap<>();
+    private Object data;
+
+    /**
+     * 返回数据缓存
+     */
+    @JsonIgnore
+    private Map<String, Object> dataCache = new HashMap<>();
 
     /**
      * 成功方法
@@ -64,14 +71,47 @@ public class Result {
         return result;
     }
 
-    public Result data(String key, Object value) {
-        data.put(key, value);
+    /**
+     * 添加简单返回数据，无需再封装一层
+     * 通过简单添加后的数据不能再添加键值对或Map数据，否则简单数据会被覆盖
+     * @param object 简单数据
+     * @return 数据体
+     */
+    public Result simpleData(Object object) {
+        this.data = object;
         return this;
     }
 
-    public Result data(Map<String, Object> map) {
-        data.putAll(map);
+    /**
+     * 添加键值对返回数据
+     * @param key 键
+     * @param value 值
+     * @return 数据体
+     */
+    public Result data(String key, Object value) {
+        dataCache.put(key, value);
+        data = dataCache;
         return this;
+    }
+
+    /**
+     * 将一个map添加到返回数据中
+     * @param map 被添加的map
+     * @return 数据体
+     */
+    public Result data(Map<String, Object> map) {
+        dataCache.putAll(map);
+        data = dataCache;
+        return this;
+    }
+
+    public Map<String, Object> data() {
+        return dataCache;
+    }
+
+    @JsonGetter(value = "data")
+    public Object simpleData() {
+        return data;
     }
 
     public Result resultType(ResultType resultEnum) {
