@@ -39,7 +39,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter(onMethod_ = @JsonGetter)
 @Accessors(fluent = true, chain = true)
-public class BaseFiled implements Serializable {
+public abstract class BaseFiled implements Serializable {
 
     /**
      * 基础ID
@@ -52,6 +52,15 @@ public class BaseFiled implements Serializable {
     @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 32)
     @InsertFillData(BaseIdAutoFillProcessor.class)
     protected String baseId;
+
+    /**
+     * 数据排序
+     */
+    @Column()
+    @ColumnComment("数据序号，用于数据排序")
+    @Index(type = IndexTypeEnum.UNIQUE)
+    @ColumnType(value = MysqlTypeConstant.INT)
+    protected Integer orderNum;
 
     /**
      * 创建时间
