@@ -32,7 +32,7 @@ import java.util.Date;
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.5
+ * @version 1.6
  */
 @Data
 @SuperBuilder
@@ -112,6 +112,22 @@ public abstract class BaseFiled implements Serializable {
             return clazz.cast(this);
         } else {
             throw new IllegalArgumentException(clazz.getSimpleName() + "与预期的类型不一致，请检查");
+        }
+    }
+
+    /**
+     * 将对象转换为BaseFiled类型<p>
+     * 注意会丢失派生类类型信息
+     *
+     * @param object 需要转换的对象
+     *
+     * @return 转换后的BaseFiled类型对象
+     */
+    public static BaseFiled convertToBaseFiled(Object object) {
+        if (object instanceof BaseFiled) {
+            return (BaseFiled) object;
+        } else {
+            throw new IllegalArgumentException("传入的参数类型不是BaseFiled的基类，请检查");
         }
     }
 
