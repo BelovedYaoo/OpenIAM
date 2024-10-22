@@ -94,7 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // 应用通过检查后的数据
-        accountData = (Account) accountDataBindCheckResult.simpleData();
+        accountData = (Account) accountDataBindCheckResult.singleData();
 
         // 验证码检查
         String codeBind = usePhone ? accountData.phone() : accountData.email();
@@ -165,7 +165,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return accountDataBindCheck;
         }
 
-        return Result.success().state(true).simpleData(accountData);
+        return Result.success().state(true).singleData(accountData);
 
     }
 
