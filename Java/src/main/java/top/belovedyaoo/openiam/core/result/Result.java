@@ -72,12 +72,12 @@ public class Result {
     }
 
     /**
-     * 添加简单返回数据，无需再封装一层
-     * 通过简单添加后的数据不能再添加键值对或Map数据，否则简单数据会被覆盖
+     * 添加单一返回数据，无需再封装一层<p>
+     * 添加单一数据后不能再添加键值对或Map数据，否则单一数据会被覆盖
      * @param object 简单数据
      * @return 数据体
      */
-    public Result simpleData(Object object) {
+    public Result singleData(Object object) {
         this.data = object;
         return this;
     }
@@ -110,7 +110,7 @@ public class Result {
     }
 
     @JsonGetter(value = "data")
-    public Object simpleData() {
+    public Object singleData() {
         return data;
     }
 
