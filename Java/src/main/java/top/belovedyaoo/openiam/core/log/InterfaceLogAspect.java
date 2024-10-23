@@ -30,7 +30,7 @@ import java.util.Objects;
  * 切面注解得到请求数据 -> 发布监听事件 -> 异步监听日志入库
  *
  * @author BelovedYaoo
- * @version 1.1
+ * @version 1.2
  */
 @Slf4j
 @Aspect
@@ -38,13 +38,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class InterfaceLogAspect {
 
-    private final InterfaceLogPO interfaceLogPO = new InterfaceLogPO();
-
     /**
      * 事件发布是由ApplicationContext对象管控的<br>
      * 发布事件前需要注入ApplicationContext对象调用publishEvent方法完成事件发布
      **/
     private final ApplicationContext applicationContext;
+
+    /**
+     * 线程局部变量，存储日志对象
+     */
+    private static final ThreadLocal<InterfaceLogPO> INTERFACE_LOG_PO_THREAD_LOCAL = new ThreadLocal<>();
 
     /***
      * 拦截规则，拦截InterfaceLog注解的方法
@@ -67,7 +70,10 @@ public class InterfaceLogAspect {
             Class<Object> entityClass = BaseController.getGenericClass(targetClass, 0);
         }
 
-        interfaceLogPO.requestUrl(URLUtil.getPath(request.getRequestURI()))
+        InterfaceLogPO interfaceLogEntity = new InterfaceLogPO();
+        // 保存到线程局部变量
+        INTERFACE_LOG_PO_THREAD_LOCAL.set(interfaceLogEntity);
+        interfaceLogEntity.requestUrl(URLUtil.getPath(request.getRequestURI()))
                 .requestIp(ServletUtil.getClientIP(request))
                 .methodName(joinPoint.getSignature().getName())
                 .startTime(new Date())
@@ -80,8 +86,8 @@ public class InterfaceLogAspect {
             // 取出执行方法上的InterfaceLog注解中的信息
             InterfaceLog interfaceLog = method.getAnnotation(InterfaceLog.class);
             if (interfaceLog != null) {
-                interfaceLogPO.businessTypes(Arrays.toString(interfaceLog.businessType()));
-                interfaceLogPO.description(interfaceLog.interfaceDesc());
+                interfaceLogEntity.businessTypes(Arrays.toString(interfaceLog.businessType()));
+                interfaceLogEntity.description(interfaceLog.interfaceDesc());
             }
         }
     }
@@ -91,11 +97,14 @@ public class InterfaceLogAspect {
      */
     @AfterReturning(returning = "ret", pointcut = "interfaceLogAspect()")
     public void doAfterReturning(Object ret) {
+        InterfaceLogPO interfaceLogEntity = INTERFACE_LOG_PO_THREAD_LOCAL.get();
         Result result = Result.tryConvert(ret);
-        interfaceLogPO.result(result.getLogString())
+        interfaceLogEntity.result(result.getLogString())
                 .finishTime(new Date());
         // 发布事件
-        applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogPO));
+        applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogEntity));
+        // 清空线程局部变量
+        INTERFACE_LOG_PO_THREAD_LOCAL.remove();
     }
 
     /**
@@ -103,10 +112,14 @@ public class InterfaceLogAspect {
      */
     @AfterThrowing(pointcut = "interfaceLogAspect()", throwing = "e")
     public void doAfterThrowable(Throwable e) {
+        InterfaceLogPO interfaceLogEntity = INTERFACE_LOG_PO_THREAD_LOCAL.get();
         // 异常
-        interfaceLogPO.exceptionMessage(e.toString());
+        interfaceLogEntity.exceptionMessage(e.toString());
         // 发布事件
-        applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogPO));
+        applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogEntity));
+        // 清空线程局部变量
+        INTERFACE_LOG_PO_THREAD_LOCAL.remove();
+
     }
 
 }
