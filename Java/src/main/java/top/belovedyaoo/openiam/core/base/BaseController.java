@@ -8,7 +8,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import top.belovedyaoo.openiam.common.toolkit.LogUtil;
 import top.belovedyaoo.openiam.core.log.BusinessType;
 import top.belovedyaoo.openiam.core.log.InterfaceLog;
 import top.belovedyaoo.openiam.core.result.Result;
@@ -17,13 +16,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static java.util.Objects.isNull;
-
 /**
  * 基础控制器
  *
  * @author BelovedYaoo
- * @version 1.1
+ * @version 1.2
  */
 @RequiredArgsConstructor
 public abstract class BaseController<T extends BaseFiled> {
@@ -87,70 +84,71 @@ public abstract class BaseController<T extends BaseFiled> {
         return entityType.cast(entity);
     }
 
+    /**
+     * 查询所有数据
+     *
+     * @return 查询结果
+     */
     @GetMapping("/queryAll")
-    @InterfaceLog(persistence = false, print = true, businessType = BusinessType.UPDATE, identifierCode = "baseId", interfaceName = "BaseController.queryAll", interfaceDesc = "查询")
+    @InterfaceLog(persistence = false, print = true, businessType = BusinessType.SELECT, identifierCode = "baseId", interfaceName = "BaseController.queryAll", interfaceDesc = "查询")
     public Result queryAll() {
         return Result.success().singleData(baseMapper.selectAll());
     }
 
+    /**
+     * 更新数据
+     *
+     * @param entity 要更新的数据
+     *
+     * @return 操作结果
+     */
     @PostMapping("/update")
     public Result update(@RequestBody T entity) {
         T typedEntity = convertTo(entity);
         String baseId = typedEntity.baseId();
-        String message;
-
-        if (isNull(baseMapper.selectOneById(baseId))) {
-            message = "ID为" + baseId + "的数据更新失败，数据不存在";
-            LogUtil.error(message);
-            return Result.failed().message("更新数据失败").description(message);
-        }
-
         boolean updateResult = baseMapper.update(typedEntity) > 0;
-
         if (!updateResult) {
-            message = "ID为" + baseId + "的数据修改失败";
-            LogUtil.error(message);
-            return Result.failed().message("数据修改失败").description(message);
+            return Result.failed().message("数据更新失败").description("ID为" + baseId + "的数据更新失败，数据可能不存在");
         }
-
-        message = "ID为 " + baseId + " 的数据被修改";
-        LogUtil.info(message);
-        return Result.success().message("数据修改成功").description(message);
+        return Result.success().message("数据更新成功").description("ID为 " + baseId + " 的数据被更新");
     }
 
+    /**
+     * 删除数据
+     *
+     * @param idList 需要删除的数据的ID列表
+     *
+     * @return 操作结果
+     */
     @PostMapping("/delete")
     public Result delete(@RequestBody List<String> idList) {
         TransactionStatus transactionStatus = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         List<T> entityList = baseMapper.selectListByIds(idList);
-        String message;
-
         boolean deleteResult = baseMapper.deleteBatchByIds(idList) == idList.size();
-
         if (!deleteResult) {
-            message = "存在未能删除的数据，操作已回滚";
-            LogUtil.error("数据删除失败");
             platformTransactionManager.rollback(transactionStatus);
-            return Result.failed().message("数据删除失败").description(message);
+            return Result.failed().message("数据删除失败").description("存在未能删除的数据，操作已回滚");
         }
-
-        message = idList.size() + "条数据被删除";
-        LogUtil.info(message);
-
         platformTransactionManager.commit(transactionStatus);
-
-        return Result.success().message("数据删除成功").description(message);
+        return Result.success().message("数据删除成功").description(idList.size() + "条数据被删除");
     }
 
+    /**
+     * 新增数据
+     *
+     * @param entity 需要添加的数据
+     *
+     * @return 操作结果
+     */
     @PostMapping("/add")
     public Result addCourseData(@RequestBody T entity) {
         T typedEntity = convertTo(entity);
+        // 防止注入
         entity.baseId(null);
         boolean addResult = baseMapper.insert(typedEntity) > 0;
-
         if (addResult) {
             return Result.success().message("数据新增成功");
         }
-
         return Result.failed().message("数据新增失败");
     }
 
