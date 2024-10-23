@@ -1,21 +1,20 @@
 package top.belovedyaoo.openiam.core.log;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.tangzc.autotable.annotation.ColumnComment;
 import com.tangzc.autotable.annotation.ColumnNotNull;
 import com.tangzc.autotable.annotation.ColumnType;
-import com.tangzc.autotable.annotation.PrimaryKey;
 import com.tangzc.autotable.annotation.mysql.MysqlTypeConstant;
 import com.tangzc.mybatisflex.annotation.InsertFillData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.belovedyaoo.openiam.core.base.BaseIdAutoFillProcessor;
+import top.belovedyaoo.openiam.core.base.BaseFiled;
 
 import java.util.Date;
 
@@ -23,27 +22,17 @@ import java.util.Date;
  * (InterfaceLog)表持久化对象
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter(onMethod_ = @JsonGetter)
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true, fluent = true)
-@Table(value = "interface_log", dataSource = "primary")
-public class InterfaceLogPO {
-
-    /**
-     * 基础ID
-     */
-    @Id
-    @ColumnNotNull
-    @PrimaryKey(value = false)
-    @ColumnComment("基础ID,仅系统内部使用")
-    @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 32)
-    @InsertFillData(BaseIdAutoFillProcessor.class)
-    protected String baseId;
+@Table(value = "log_interface", dataSource = "primary")
+public class InterfaceLogPO extends BaseFiled {
 
     /**
      * 操作者ID
@@ -51,6 +40,7 @@ public class InterfaceLogPO {
     @ColumnNotNull
     @ColumnComment("每条日志记录的操作者ID")
     @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 32)
+    @InsertFillData(OperatorIdAutoFillProcessor.class)
     private String operatorId;
 
     /**
@@ -59,7 +49,7 @@ public class InterfaceLogPO {
     @ColumnNotNull
     @ColumnComment("每条日志记录的业务类型")
     @ColumnType(value = MysqlTypeConstant.VARCHAR, length = 50)
-    private BusinessType[] businessTypes;
+    private String businessTypes;
 
     /**
      * 请求接口路径

@@ -1,6 +1,5 @@
 package top.belovedyaoo.openiam.core.log;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.belovedyaoo.openiam.core.base.BaseController;
 import top.belovedyaoo.openiam.core.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +26,11 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * 接口日志切面类
- * ①切面注解得到请求数据 -> ②发布监听事件 -> ③异步监听日志入库
+ * 接口日志切面类<br>
+ * 切面注解得到请求数据 -> 发布监听事件 -> 异步监听日志入库
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 @Slf4j
 @Aspect
@@ -41,7 +41,8 @@ public class InterfaceLogAspect {
     private final InterfaceLogPO interfaceLogPO = new InterfaceLogPO();
 
     /**
-     * 事件发布是由ApplicationContext对象管控的，发布事件前需要注入ApplicationContext对象调用publishEvent方法完成事件发布
+     * 事件发布是由ApplicationContext对象管控的<br>
+     * 发布事件前需要注入ApplicationContext对象调用publishEvent方法完成事件发布
      **/
     private final ApplicationContext applicationContext;
 
@@ -50,7 +51,6 @@ public class InterfaceLogAspect {
      */
     @Pointcut("@annotation(top.belovedyaoo.openiam.core.log.InterfaceLog)")
     public void interfaceLogAspect() {
-
     }
 
     /**
@@ -59,8 +59,15 @@ public class InterfaceLogAspect {
     @Before(value = "interfaceLogAspect()")
     public void recordLog(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        interfaceLogPO.operatorId(StpUtil.getLoginId("-1"))
-                .requestUrl(URLUtil.getPath(request.getRequestURI()))
+        Class<?> targetClass = joinPoint.getTarget().getClass();
+
+        // 判断是否继承了BaseController
+        if (BaseController.class.isAssignableFrom(targetClass)) {
+            // 取得具体继承类的泛型类型
+            Class<Object> entityClass = BaseController.getGenericClass(targetClass, 0);
+        }
+
+        interfaceLogPO.requestUrl(URLUtil.getPath(request.getRequestURI()))
                 .requestIp(ServletUtil.getClientIP(request))
                 .methodName(joinPoint.getSignature().getName())
                 .startTime(new Date())
@@ -73,7 +80,7 @@ public class InterfaceLogAspect {
             // 取出执行方法上的InterfaceLog注解中的信息
             InterfaceLog interfaceLog = method.getAnnotation(InterfaceLog.class);
             if (interfaceLog != null) {
-                interfaceLogPO.businessTypes(interfaceLog.businessType());
+                interfaceLogPO.businessTypes(Arrays.toString(interfaceLog.businessType()));
                 interfaceLogPO.description(interfaceLog.interfaceDesc());
             }
         }
@@ -85,16 +92,8 @@ public class InterfaceLogAspect {
     @AfterReturning(returning = "ret", pointcut = "interfaceLogAspect()")
     public void doAfterReturning(Object ret) {
         Result result = Result.tryConvert(ret);
-        interfaceLogPO.result(result.toString())
+        interfaceLogPO.result(result.getLogString())
                 .finishTime(new Date());
-        // 处理完请求，返回内容
-        // if (r.getCode() == 200) {
-        //     正常返回
-        // sysLogPO.setType(1);
-        // } else {
-        //     sysLogPO.setType(2);
-        //     sysLogPO.setExDetail(r.getMsg());
-        // }
         // 发布事件
         applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogPO));
     }
@@ -105,11 +104,7 @@ public class InterfaceLogAspect {
     @AfterThrowing(pointcut = "interfaceLogAspect()", throwing = "e")
     public void doAfterThrowable(Throwable e) {
         // 异常
-        // sysLogPO.setType(2);
-        // 异常对象
-        // sysLogPO.setExDetail(LogUtil.getStackTrace(e));
-        // 异常信息
-        // sysLogPO.setExDesc(e.getMessage());
+        interfaceLogPO.exceptionMessage(e.toString());
         // 发布事件
         applicationContext.publishEvent(new InterfaceLogEvent(interfaceLogPO));
     }

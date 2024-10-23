@@ -14,7 +14,7 @@ import java.util.Map;
  * 返回结果统一封装类
  *
  * @author BelovedYaoo
- * @version 1.3
+ * @version 1.4
  */
 @Data
 @NoArgsConstructor
@@ -74,7 +74,9 @@ public class Result {
     /**
      * 添加单一返回数据，无需再封装一层<p>
      * 添加单一数据后不能再添加键值对或Map数据，否则单一数据会被覆盖
+     *
      * @param object 简单数据
+     *
      * @return 数据体
      */
     public Result singleData(Object object) {
@@ -84,8 +86,10 @@ public class Result {
 
     /**
      * 添加键值对返回数据
-     * @param key 键
+     *
+     * @param key   键
      * @param value 值
+     *
      * @return 数据体
      */
     public Result data(String key, Object value) {
@@ -96,7 +100,9 @@ public class Result {
 
     /**
      * 将一个map添加到返回数据中
+     *
      * @param map 被添加的map
+     *
      * @return 数据体
      */
     public Result data(Map<String, Object> map) {
@@ -129,4 +135,32 @@ public class Result {
         }
     }
 
+    /**
+     * 转为日志信息<br>
+     * 值为null的字段忽略
+     *
+     * @return 日志信息
+     */
+    @JsonIgnore
+    public String getLogString() {
+        StringBuilder resultBuilder = new StringBuilder();
+        resultBuilder.append("Result(");
+        if (code != null) {
+            resultBuilder.append("code=").append(code).append(", ");
+        }
+        if (state != null) {
+            resultBuilder.append("state=").append(state).append(", ");
+        }
+        if (message != null) {
+            resultBuilder.append("message=").append(message).append(", ");
+        }
+        if (description != null) {
+            resultBuilder.append("description=").append(description).append(", ");
+        }
+        if (data != null) {
+            resultBuilder.append("data=").append(singleData());
+        }
+        resultBuilder.append(")");
+        return resultBuilder.toString();
+    }
 }

@@ -1,5 +1,6 @@
 package top.belovedyaoo.openiam.core.log;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -10,18 +11,21 @@ import org.springframework.stereotype.Component;
  * 注解形式的监听 异步监听日志事件
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InterfaceLogListener {
+
+    private final InterfaceLogMapper interfaceLogMapper;
 
     @Async
     @Order
     @EventListener(InterfaceLogEvent.class)
     public void saveInterfaceLog(InterfaceLogEvent event) {
         InterfaceLogPO interfaceLog = (InterfaceLogPO) event.getSource();
-        System.out.println(interfaceLog);
+        interfaceLogMapper.insert(interfaceLog);
     }
 
 }
