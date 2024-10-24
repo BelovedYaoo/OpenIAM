@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { globalConfig } from '@/service/globalQuote';
 </script>
 

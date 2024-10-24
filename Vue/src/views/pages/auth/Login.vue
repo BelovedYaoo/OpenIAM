@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios from 'axios';

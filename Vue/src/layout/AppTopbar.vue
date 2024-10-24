@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useLayout } from '@/service/layout';
 import { globalConfig } from '@/service/globalQuote';
