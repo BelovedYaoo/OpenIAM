@@ -57,7 +57,7 @@ const logoUrl = computed(() => {
 <template>
     <div class="layout-topbar">
         <div class="layout-topbar-logo" @click="onMenuToggle()">
-            <img alt="logo" src="/images/logo.svg"/>
+            <img alt="logo" src="/images/logo.svg" />
             <span class="pl-2">{{ globalConfig.appName }}</span>
         </div>
 
@@ -69,17 +69,23 @@ const logoUrl = computed(() => {
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <div :class="topbarMenuClasses" class="layout-topbar-menu">
-            <Button class="p-2 layout-menu-button" rounded style="width: 41px; height: 41px" text
-                    @click="switchDarkTheme()">
-                <img :src="logoUrl" alt="s" height="25" width="25"/>
+        <div :class="topbarMenuClasses" class="gap-3 layout-topbar-menu" style="align-items: center;">
+            <Button class="m-0 layout-menu-button justify-center" style="padding: 7.7px" rounded text
+                @click="switchDarkTheme()">
+                <img :src="logoUrl" alt="s" height="20" width="20" />
             </Button>
-            <Button aria-label="Bookmark" class="layout-menu-button" icon="pi pi-bookmark" rounded severity="secondary" size="large"
-                    text/>
-            <Button aria-label="Search" class="layout-menu-button" icon="pi pi-search" rounded severity="success" size="large"
-                    text/>
+            <Button aria-label="Bookmark" class="m-0 p-0 layout-menu-button topbar-button" icon="pi pi-bookmark" rounded
+                severity="secondary" size="large" text />
+            <Button aria-label="Search" class="m-0 p-0 layout-menu-button topbar-button" icon="pi pi-search" rounded
+                severity="success" size="large" text />
+            <Avatar label="V" class="" size="large" style="background-color: #ece9fc; color: #2a1261" shape="circle" />
         </div>
     </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.topbar-button {
+    width: 36.6px;
+    height: 36.6px;
+}
+</style>
