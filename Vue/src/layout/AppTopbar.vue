@@ -78,7 +78,8 @@ const logoUrl = computed(() => {
                 severity="secondary" size="large" text />
             <Button aria-label="Search" class="m-0 p-0 layout-menu-button topbar-button" icon="pi pi-search" rounded
                 severity="success" size="large" text />
-            <Avatar label="V" class="" size="large" style="background-color: #ece9fc; color: #2a1261" shape="circle" />
+            <Avatar image="https://avatars.githubusercontent.com/u/103827252?v=4" class="" size="large"
+                style="background-color: #ece9fc; color: #2a1261" shape="circle" />
         </div>
     </div>
 </template>
