@@ -5,7 +5,7 @@ import { globalConfig } from '@/service/globalQuote';
 
 const { switchDarkTheme, layoutConfig, onMenuToggle } = useLayout();
 
-const outsideClickListener = ref(null);
+const outsideClickListener = ref();
 const topbarMenuActive = ref(false);
 
 onMounted(() => {
@@ -27,7 +27,7 @@ const topbarMenuClasses = computed(() => {
 
 const bindOutsideClickListener = () => {
     if (!outsideClickListener.value) {
-        outsideClickListener.value = (event) => {
+        outsideClickListener.value = (event:PointerEvent) => {
             if (isOutsideClicked(event)) {
                 topbarMenuActive.value = false;
             }
@@ -37,17 +37,17 @@ const bindOutsideClickListener = () => {
 };
 const unbindOutsideClickListener = () => {
     if (outsideClickListener.value) {
-        document.removeEventListener('click', outsideClickListener);
+        document.removeEventListener('click', outsideClickListener.value);
         outsideClickListener.value = null;
     }
 };
-const isOutsideClicked = (event) => {
+const isOutsideClicked = (event:PointerEvent) => {
     if (!topbarMenuActive.value) return;
 
-    const sidebarEl = document.querySelector('.layout-topbar-menu');
-    const topbarEl = document.querySelector('.layout-topbar-menu-button');
+    const sidebarEl = document.querySelector('.layout-topbar-menu') as Node;
+    const topbarEl = document.querySelector('.layout-topbar-menu-button') as Node;
 
-    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+    return !(sidebarEl.isSameNode(event.target as Node) || sidebarEl.contains(event.target as Node) || topbarEl.isSameNode(event.target as Node) || topbarEl.contains(event.target as Node));
 };
 const logoUrl = computed(() => {
     return `images/${layoutConfig.darkTheme.value ? 'day' : 'night'}.svg`;
@@ -69,7 +69,7 @@ const logoUrl = computed(() => {
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <div :class="topbarMenuClasses" class="gap-3 layout-topbar-menu" style="align-items: center;">
+        <div :class="topbarMenuClasses" class="gap-3 layout-topbar-menu align-items-center">
             <Button class="m-0 layout-menu-button justify-center" style="padding: 7.7px" rounded text
                 @click="switchDarkTheme()">
                 <img :src="logoUrl" alt="s" height="20" width="20" />

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/service/layout';
@@ -27,7 +27,7 @@ const props = defineProps({
 });
 
 const isActiveMenu = ref(false);
-const itemKey = ref(null);
+const itemKey = ref();
 
 onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? `${props.parentItemKey}-${props.index}` : String(props.index);
@@ -43,7 +43,7 @@ watch(
         isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(`${itemKey.value}-`);
     }
 );
-const itemClick = (event, item) => {
+const itemClick = (event: MouseEvent | PointerEvent, item: any) => {
     if (item.disabled) {
         event.preventDefault();
         return;
@@ -64,7 +64,7 @@ const itemClick = (event, item) => {
     setActiveMenuItem(foundItemKey);
 };
 
-const checkActiveRoute = (item) => {
+const checkActiveRoute = (item: any) => {
     return route.path === item.to;
 };
 </script>
@@ -73,13 +73,14 @@ const checkActiveRoute = (item) => {
     <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
         <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
         <a v-if="(!item.to || item.items) && item.visible !== false" :class="item.class"
-           :href="item.url" :target="item.target" tabindex="0" @click="itemClick($event, item, index)">
+           :href="item.url" :target="item.target" tabindex="0" @click="itemClick($event, item)">
             <i :class="item.icon" class="layout-menuitem-icon"></i>
             <span class="layout-menuitem-text font-semibold">{{ item.label }}</span>
             <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
         </a>
-        <router-link v-if="item.to && !item.items && item.visible !== false" :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
-                     :to="item.to" tabindex="0" @click="itemClick($event, item, index)">
+        <router-link v-if="item.to && !item.items && item.visible !== false"
+                     :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
+                     :to="item.to" tabindex="0" @click="itemClick($event, item)">
             <i v-if="item.icon" :class="item.icon" class="layout-menuitem-icon"></i>
             <Avatar v-if="item.img" :image="item.img" class="mr-2 border-circle" shape="circle"
                     style="width: 18px; height: 18px"/>

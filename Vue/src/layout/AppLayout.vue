@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
-const outsideClickListener = ref(null);
+const outsideClickListener = ref();
 const isFlex = ref(['aliyuntongyi']);
 
 watch(isSidebarActive, (newVal) => {
@@ -38,7 +38,7 @@ const containerClass = computed(() => {
 });
 const bindOutsideClickListener = () => {
     if (!outsideClickListener.value) {
-        outsideClickListener.value = (event) => {
+        outsideClickListener.value = (event: PointerEvent) => {
             if (isOutsideClicked(event)) {
                 layoutState.overlayMenuActive.value = false;
                 layoutState.staticMenuMobileActive.value = false;
@@ -54,16 +54,16 @@ const unbindOutsideClickListener = () => {
         outsideClickListener.value = null;
     }
 };
-const isOutsideClicked = (event) => {
+const isOutsideClicked = (event: PointerEvent) => {
     const sidebarEl = document.querySelector('.layout-sidebar');
     const topbarEl = document.querySelector('.layout-menu-button');
     if (sidebarEl === null) {
         return;
     }
     if (topbarEl !== null) {
-        return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+        return !(sidebarEl.isSameNode(event.target as Node) || sidebarEl.contains(event.target as Node) || topbarEl.isSameNode(event.target as Node) || topbarEl.contains(event.target as Node));
     } else {
-        return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target));
+        return !(sidebarEl.isSameNode(event.target as Node) || sidebarEl.contains(event.target as Node));
     }
 };
 </script>

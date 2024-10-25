@@ -1,9 +1,9 @@
 <script setup>
 defineProps({
     displayHeight: {
-        type: Number,
+        type: String,
         required: false,
-        default: 50
+        default: '50'
     },
     marginBottom: {
         type: String,
