@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { FilterMatchMode } from 'primevue/api';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import request from '@/service/request';
 import { DataTablePageEvent } from 'primevue/datatable';
@@ -6,7 +7,23 @@ import { useLayout } from '@/service/layout';
 
 const { layoutState } = useLayout();
 
-const keywordFilters = ref('');
+// 过滤器
+const keywordFilters = ref();
+const initFilters = () => {
+    keywordFilters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    };
+};
+
+// 启用排序和选中
+const enableSortedAndSelected = ref(false);
+const switchedAndSelectedToggle = () => {
+    enableSortedAndSelected.value = !enableSortedAndSelected.value;
+    selectedRecords.value = [];
+};
+
+// 选中记录
+const selectedRecords = ref();
 
 // 样式设置浮窗
 const paletteOp = ref();
@@ -42,6 +59,7 @@ watch(() => dataTableStyle.value.rowsPerPage, () => {
 const accountData = ref<Array<Account>>([]);
 
 onBeforeMount(() => {
+    initFilters();
     dataInit();
 });
 
@@ -87,59 +105,128 @@ const miniShow = ref(true);
 watch(() => windowWidth.value, (newValue) => {
     // layoutState.staticMenuDesktopInactive.value 为 True 时代表侧边栏收起
     showFooter.value = newValue > (!layoutState.staticMenuDesktopInactive.value ? 1388 : 1110);
-    miniShow.value = newValue < 563;
+    miniShow.value = newValue < 620;
 });
 
 watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
     showFooter.value = windowWidth.value > (!newValue ? 1388 : 1110);
 });
+
+// 行重新排序
+const onRowReorder = (event: any) => {
+    accountData.value = event.value;
+};
+
+// 行选中删除
+const deleteRecords = () => {
+    console.log(selectedRecords.value);
+};
+
+// 字段列表
+const filedList = ref([
+    { field: 'openId', header: 'OpenID', style: 'width:20%;min-width:10rem;' },
+    { field: 'phone', header: '手机号', style: 'width:20%;min-width:10rem;' },
+    { field: 'email', header: '邮箱', style: 'width:20%;min-width:10rem;' },
+    { field: 'nickname', header: '昵称', style: 'width:10%;min-width:7rem;' },
+]);
+
+// 表数据导出
+const dataTable = ref();
+const exportCSV = () => {
+    dataTable.value.exportCSV();
+};
+
+// 表右键菜单
+const cm = ref();
+const contextMenuSelection = ref();
+// 菜单展开
+const onRowContextMenu = (event: any) => {
+    cm.value.show(event.originalEvent);
+};
+// 菜单列表
+const menuModel = ref([
+    {
+        label: '修改',
+        icon: 'pi pi-fw pi-pencil',
+        command: () => modifyProduct(contextMenuSelection)
+    },
+    {
+        label: '删除',
+        icon: 'pi pi-fw pi-times',
+        command: () => deleteProduct(contextMenuSelection)
+    }
+]);
+const modifyProduct = (record: any) => {
+    console.log(record.value);
+};
+const deleteProduct = (record: any) => {
+    accountData.value = accountData.value.filter((p: any) => p.baseId !== record.value.baseId);
+    contextMenuSelection.value = null;
+};
 </script>
 
 <template>
     <div class="card">
-        <DataTable :class="`p-datatable-${dataTableStyle.size.class}`"
+        <ContextMenu ref="cm" :model="menuModel"/>
+        <DataTable ref="dataTable"
+                   v-model:contextMenuSelection="contextMenuSelection"
+                   v-model:selection="selectedRecords"
+                   :class="`p-datatable-${dataTableStyle.size.class}`"
+                   :filters="keywordFilters"
                    :first="(dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage"
                    :paginator-template="{
                        '450px': 'PrevPageLink CurrentPageReport NextPageLink',
                        '570px': 'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink'
                    }"
+                   :reorderableColumns="enableSortedAndSelected"
                    :rows="dataTableStyle.rowsPerPage"
                    :scrollHeight="`${windowHeight - 400}px`"
                    :showGridlines="dataTableStyle.showGridlines"
-                   :stripedRows="dataTableStyle.stripedRows" :value="accountData"
+                   :stripedRows="dataTableStyle.stripedRows"
+                   :value="accountData"
+                   contextMenu
                    current-page-report-template="{currentPage} / {totalPages}"
                    paginator
                    removableSort
                    scrollable
                    sortMode="multiple"
                    tableStyle="min-width: 50rem"
-                   @page="onPageChange">
+                   @page="onPageChange"
+                   @rowContextmenu="onRowContextMenu"
+                   @rowReorder="onRowReorder">
             <template #header>
                 <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                     <span class="text-xl text-900 font-bold">账户</span>
                     <div class="flex gap-4">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"/>
-                            <InputText v-model="keywordFilters" :class="miniShow?'w-10rem':'w-13rem'"
+                            <InputText v-model="keywordFilters['global'].value" :class="miniShow?'w-10rem':'w-13rem'"
                                        placeholder="输入以搜索" type="text"/>
                         </span>
-                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded/>
-                        <Button v-if="!miniShow" icon="pi pi-bars" raised rounded @click="console.log(windowWidth)"/>
+                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
+                        <Button v-if="!miniShow && enableSortedAndSelected" icon="pi pi-trash" raised rounded
+                                @click="deleteRecords"/>
+                        <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
+                                @click="switchedAndSelectedToggle"/>
                         <Button icon="pi pi-cog" raised rounded @click="paletteToggle"/>
                         <OverlayPanel ref="paletteOp">
                             <div class="flex flex-column gap-3">
                                 <div class="flex flex-row gap-3">
-                                    <Button v-if="miniShow" icon="pi pi-refresh" raised rounded/>
-                                    <Button v-if="miniShow" icon="pi pi-bars" raised rounded
-                                            @click="console.log(windowWidth)"/>
+                                    <Button v-if="miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
+                                    <Button v-if="miniShow" icon="pi pi-pencil" raised rounded
+                                            @click="switchedAndSelectedToggle"/>
+                                    <Button v-if="miniShow && enableSortedAndSelected" icon="pi pi-trash" raised rounded
+                                            @click="deleteRecords"/>
+                                    <Button icon="pi pi-upload" raised rounded
+                                            @click="exportCSV"/>
                                 </div>
                                 <SelectButton v-model="dataTableStyle.size" :options="sizeOptions" dataKey="label"
                                               optionLabel="label"/>
-                                <div class="flex align-items-center">
+                                <div class="flex align-items-center justify-content-between">
                                     <label>单元格描边：</label>
                                     <InputSwitch v-model="dataTableStyle.showGridlines"/>
                                 </div>
-                                <div class="flex align-items-center">
+                                <div class="flex align-items-center justify-content-between">
                                     <label>交替条纹：</label>
                                     <InputSwitch v-model="dataTableStyle.stripedRows"/>
                                 </div>
@@ -180,10 +267,24 @@ watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
                     </div>
                 </div>
             </template>
-            <Column field="openId" header="OpenID" sortable=""></Column>
-            <Column field="phone" header="手机号" sortable=""></Column>
-            <Column field="email" header="邮箱" sortable=""></Column>
-            <Column field="nickname" header="昵称" sortable=""></Column>
+            <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;" rowReorder/>
+            <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
+                    selectionMode="multiple"></Column>
+            <!-- 循环渲染 -->
+            <Column v-for="filed in filedList"
+                    :key="filed.field"
+                    :field="filed.field"
+                    :header="filed.header"
+                    :headerStyle="filed?.style"
+                    :reorderableColumn="false"
+                    sortable=""></Column>
         </DataTable>
     </div>
 </template>
+
+<style scoped>
+.edit-button {
+    width: 30px;
+    height: 30px;
+}
+</style>
