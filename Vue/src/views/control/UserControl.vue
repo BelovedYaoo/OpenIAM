@@ -31,6 +31,9 @@ const dataTableStyle = ref({
 // 总页数
 const totalPages = ref(0);
 
+// 总记录数
+const totalRecords = ref(0);
+
 // 根据页面数量计算总页数
 watch(() => dataTableStyle.value.rowsPerPage, () => {
     totalPages.value = Math.ceil(accountData.value.length / dataTableStyle.value.rowsPerPage);
@@ -49,6 +52,7 @@ const dataInit = () => {
     }).then((response) => {
         accountData.value = response.data.data as Array<Account>;
         totalPages.value = Math.ceil(accountData.value.length / dataTableStyle.value.rowsPerPage);
+        totalRecords.value = accountData.value.length;
     });
 };
 
@@ -154,7 +158,7 @@ watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
             </template>
             <template v-if="showFooter" #paginatorstart>
                 <label>当前显示第 {{ dataTableStyle.currentPage * dataTableStyle.rowsPerPage }} 至
-                    {{ (dataTableStyle.currentPage + 1) * dataTableStyle.rowsPerPage }} 项，共 1001 条记录</label>
+                    {{ (dataTableStyle.currentPage + 1) * dataTableStyle.rowsPerPage }} 项，共 {{totalRecords}} 条记录</label>
             </template>
             <template v-if="showFooter" #paginatorend>
                 <div class="flex flex-row align-items-center justify-content-center">
