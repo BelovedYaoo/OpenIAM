@@ -99,25 +99,30 @@ watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
     <div class="card">
         <DataTable :class="`p-datatable-${dataTableStyle.size.class}`"
                    :first="(dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage"
-                   :rows="dataTableStyle.rowsPerPage"
-                   :showGridlines="dataTableStyle.showGridlines"
-                   :stripedRows="dataTableStyle.stripedRows"
-                   :value="accountData" paginator
-                   removableSort
-                   :scrollHeight="`${windowHeight - 400}px`"
-                   scrollable
-                   sortMode="multiple"
-                   tableStyle="min-width: 50rem"
-                   @page="onPageChange"
                    :paginator-template="{
                        '450px': 'PrevPageLink CurrentPageReport NextPageLink',
                        '570px': 'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink'
-                   }">
+                   }"
+                   :rows="dataTableStyle.rowsPerPage"
+                   :scrollHeight="`${windowHeight - 400}px`"
+                   :showGridlines="dataTableStyle.showGridlines"
+                   :stripedRows="dataTableStyle.stripedRows" :value="accountData"
+                   current-page-report-template="{currentPage} / {totalPages}"
+                   paginator
+                   removableSort
+                   scrollable
+                   sortMode="multiple"
+                   tableStyle="min-width: 50rem"
+                   @page="onPageChange">
             <template #header>
                 <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                     <span class="text-xl text-900 font-bold">账户</span>
                     <div class="flex gap-4">
-                        <InputText type="text" v-model="keywordFilters" class="w-10rem"/>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"/>
+                            <InputText v-model="keywordFilters" :class="miniShow?'w-10rem':'w-13rem'"
+                                       placeholder="输入以搜索" type="text"/>
+                        </span>
                         <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded/>
                         <Button v-if="!miniShow" icon="pi pi-bars" raised rounded @click="console.log(windowWidth)"/>
                         <Button icon="pi pi-cog" raised rounded @click="paletteToggle"/>
@@ -125,7 +130,8 @@ watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
                             <div class="flex flex-column gap-3">
                                 <div class="flex flex-row gap-3">
                                     <Button v-if="miniShow" icon="pi pi-refresh" raised rounded/>
-                                    <Button v-if="miniShow" icon="pi pi-bars" raised rounded @click="console.log(windowWidth)"/>
+                                    <Button v-if="miniShow" icon="pi pi-bars" raised rounded
+                                            @click="console.log(windowWidth)"/>
                                 </div>
                                 <SelectButton v-model="dataTableStyle.size" :options="sizeOptions" dataKey="label"
                                               optionLabel="label"/>
@@ -158,7 +164,8 @@ watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
             </template>
             <template v-if="showFooter" #paginatorstart>
                 <label>当前显示第 {{ dataTableStyle.currentPage * dataTableStyle.rowsPerPage }} 至
-                    {{ (dataTableStyle.currentPage + 1) * dataTableStyle.rowsPerPage }} 项，共 {{totalRecords}} 条记录</label>
+                    {{ (dataTableStyle.currentPage + 1) * dataTableStyle.rowsPerPage }} 项，共 {{ totalRecords }}
+                    条记录</label>
             </template>
             <template v-if="showFooter" #paginatorend>
                 <div class="flex flex-row align-items-center justify-content-center">
