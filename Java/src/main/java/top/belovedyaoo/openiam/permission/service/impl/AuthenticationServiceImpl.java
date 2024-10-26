@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import top.belovedyaoo.openiam.generateMapper.AccountMapper;
 import top.belovedyaoo.openiam.permission.entity.Account;
 import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
 import top.belovedyaoo.openiam.core.result.Result;
@@ -18,7 +19,7 @@ import static cn.hutool.core.util.ObjectUtil.isNull;
  * 认证服务实现类
  *
  * @author BelovedYaoo
- * @version 1.1
+ * @version 1.2
  */
 @Service
 @RequiredArgsConstructor
@@ -29,10 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     public static final String VERIFY_CODE_PREFIX = "accountRegister";
 
-    /**
-     * (Account) 表服务接口
-     */
-    private final AccountServiceImpl accountService;
+    private final AccountMapper accountMapper;
 
     /**
      * 认证工具类
@@ -49,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Result accountLogin(Account accountData) {
 
-        Account account = accountService.getOne(new QueryWrapper()
+        Account account = accountMapper.selectOneByQuery(new QueryWrapper()
                 .eq("open_id", accountData.openId()));
 
         // 账号不存在
@@ -108,7 +106,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // 数据入库
-        accountService.save(accountData);
+        accountMapper.insert(accountData);
 
         // 清除验证码
         JedisOperateUtil.del(VERIFY_CODE_PREFIX + ":" + (usePhone ? accountData.phone() : accountData.email()));
@@ -134,7 +132,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Result accountDataBindCheck = Result.failed().state(false);
 
         // 检查登录ID是否已被使用
-        boolean accountLoginIdAlreadyUse = accountService.exists(new QueryWrapper().eq("open_id", accountData.openId()));
+        boolean accountLoginIdAlreadyUse = accountMapper.selectCountByQuery(new QueryWrapper().eq("open_id", accountData.openId())) == 1;
         if (accountLoginIdAlreadyUse) {
             return accountDataBindCheck.resultType(AuthenticationResultEnum.LOGIN_ID_ALREADY_USE);
         }
@@ -159,7 +157,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // 查询是否已存在对应条件的数据
-        boolean uniqueBindAlreadyUse = accountService.exists(uniqueBindQuery);
+        boolean uniqueBindAlreadyUse = accountMapper.selectCountByQuery(uniqueBindQuery) == 1;
 
         if (uniqueBindAlreadyUse) {
             return accountDataBindCheck;

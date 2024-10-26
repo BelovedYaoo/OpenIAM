@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.belovedyaoo.openiam.core.log.InterfaceLog;
 import top.belovedyaoo.openiam.core.result.Result;
+import top.belovedyaoo.openiam.generateMapper.AccountMapper;
 import top.belovedyaoo.openiam.permission.entity.Account;
-import top.belovedyaoo.openiam.permission.service.impl.AccountServiceImpl;
 import top.belovedyaoo.openiam.permission.service.impl.AuthenticationServiceImpl;
 import top.belovedyaoo.openiam.permission.toolkit.AuthenticationUtil;
 
@@ -21,7 +21,7 @@ import static top.belovedyaoo.openiam.permission.service.impl.AuthenticationServ
  * 认证控制层
  *
  * @author BelovedYaoo
- * @version 1.4
+ * @version 1.5
  */
 @RestController
 @RequestMapping("/auth")
@@ -35,11 +35,11 @@ public class AuthenticationController {
 
     private final AuthenticationServiceImpl authenticationService;
 
-    private final AccountServiceImpl accountService;
+    private final AccountMapper accountMapper;
 
     @PostMapping("/test")
     public boolean test(String str) {
-        return accountService.removeById(str);
+        return accountMapper.deleteById(str) > 0;
     }
 
     @PostMapping("/test2")
@@ -50,7 +50,7 @@ public class AuthenticationController {
                 .openId("222")
                 .build();
         System.out.println(account);
-        accountService.save(Account.builder()
+        accountMapper.insert(Account.builder()
                 .openId("123")
                 .password("YTY2NWE0NTkyMDQyMmY5ZDQxN2U0ODY3ZWZkYzRmYjhhMDRhMWYzZmZmMWZhMDdlOTk4ZTg2ZjdmN2EyN2FlMw==")
                 .email("belovedyaoo@qq.com")
@@ -77,7 +77,6 @@ public class AuthenticationController {
      */
     @PostMapping("/accountLogin")
     public Result accountLogin(@RequestBody Account account) {
-        System.out.println(account);
         return authenticationService.accountLogin(account);
     }
 
