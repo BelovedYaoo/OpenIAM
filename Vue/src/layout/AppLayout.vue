@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import { useLayout } from '@/service/layout';
 import { useRoute } from 'vue-router';
+import { storeState, useCounterStore } from '@/service/store';
+import { storeToRefs } from 'pinia';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -65,6 +67,20 @@ const isOutsideClicked = (event: PointerEvent) => {
     } else {
         return !(sidebarEl.isSameNode(event.target as Node) || sidebarEl.contains(event.target as Node));
     }
+};
+
+const store = useCounterStore();
+const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
+
+onMounted(() => {
+    getWindowResize();
+    window.addEventListener('resize', getWindowResize);
+});
+
+// 获取屏幕尺寸
+const getWindowResize = function () {
+    windowWidth.value = window.innerWidth;
+    windowHeight.value = window.innerHeight;
 };
 </script>
 

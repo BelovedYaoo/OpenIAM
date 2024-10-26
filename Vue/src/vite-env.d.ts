@@ -14,6 +14,15 @@ declare module '@/service/layout' {
     export function useLayout();
 }
 
+declare module '@/service/store' {
+    import { StoreGeneric } from 'pinia';
+    export function useCounterStore();
+    export interface storeState extends StoreGeneric {
+        windowWidth: number
+        windowHeight: number
+    }
+}
+
 declare module '@/service/globalQuote' {
     import { AppConfig } from '@/service/globalQuote';
     export const globalConfig: AppConfig;

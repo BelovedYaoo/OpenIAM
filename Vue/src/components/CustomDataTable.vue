@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
-import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import { DataTablePageEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
 import request from '@/service/request';
 import { ColumnProps } from 'primevue/column';
+import { storeState, useCounterStore } from '@/service/store';
+import { storeToRefs } from 'pinia';
+import { AxiosResponse } from 'axios';
 
 const props = defineProps<{
     dataUrl: {
@@ -79,7 +82,7 @@ const dataInit = () => {
     request({
         url: props.dataUrl,
         method: 'GET'
-    }).then((response) => {
+    }).then((response: AxiosResponse) => {
         tableData.value = response.data.data as Array<Account>;
         totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
         totalRecords.value = tableData.value.length;
@@ -91,23 +94,8 @@ const onPageChange = (event: DataTablePageEvent) => {
     dataTableStyle.value.currentPage = event.page + 1;
 };
 
-// 屏幕宽度
-const windowWidth = ref(0);
-
-// 屏幕高度
-const windowHeight = ref(0);
-
-// 生命周期
-onMounted(() => {
-    getWindowResize();
-    window.addEventListener('resize', getWindowResize);
-});
-
-// 获取屏幕尺寸
-const getWindowResize = function () {
-    windowWidth.value = window.innerWidth;
-    windowHeight.value = window.innerHeight;
-};
+const store = useCounterStore();
+const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
 
 // 表格底部显示
 const showFooter = ref(true);
@@ -143,10 +131,12 @@ const exportCSV = () => {
 // 表右键菜单
 const cm = ref();
 const contextMenuSelection = ref();
+
 // 菜单展开
 const onRowContextMenu = (event: any) => {
     cm.value.show(event.originalEvent);
 };
+
 // 菜单列表
 const menuModel = ref([
     {
@@ -160,9 +150,11 @@ const menuModel = ref([
         command: () => deleteProduct(contextMenuSelection)
     }
 ]);
+
 const modifyProduct = (record: any) => {
     console.log(record.value);
 };
+
 const deleteProduct = (record: any) => {
     tableData.value = tableData.value.filter((p: any) => p.baseId !== record.value.baseId);
     contextMenuSelection.value = null;
