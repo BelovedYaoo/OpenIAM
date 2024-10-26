@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
-import { onBeforeMount, ref, watch } from 'vue';
-import { DataTablePageEvent } from 'primevue/datatable';
+import { computed, onBeforeMount, ref, watch } from 'vue';
+import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
 import request from '@/service/request';
 import { ColumnProps } from 'primevue/column';
 import { storeState, useCounterStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
 import { AxiosResponse } from 'axios';
+import { responseToastConfig } from '@/service/globalQuote';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 const props = defineProps({
     tableName: {
@@ -15,6 +19,10 @@ const props = defineProps({
         required: true,
     },
     dataUrl: {
+        type: String,
+        required: true
+    },
+    reorderUrl: {
         type: String,
         required: true
     },
@@ -71,9 +79,12 @@ const totalPages = ref(0);
 // 总记录数
 const totalRecords = ref(0);
 
-// 根据页面数量计算总页数
-watch(() => dataTableStyle.value.rowsPerPage, () => {
+// 监听页面数量变化
+watch(() => dataTableStyle.value.rowsPerPage, (newValue, oldValue) => {
+    // 根据页面数量计算总页数
     totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
+    // 重置当前页
+    dataTableStyle.value.currentPage = Math.max(Math.ceil(((dataTableStyle.value.currentPage - 1) * oldValue + 1) / newValue), 1);
 });
 
 // 挂载
@@ -89,6 +100,7 @@ const dataInit = () => {
         url: props.dataUrl,
         method: 'GET'
     }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
         tableData.value = response.data.data as Array<Account>;
         totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
         totalRecords.value = tableData.value.length;
@@ -104,39 +116,38 @@ const onPageChange = (event: DataTablePageEvent) => {
 const store = useCounterStore();
 const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
 
-// 表格底部显示
-const showFooter = ref(true);
-// 迷你显示
-const miniShow = ref(true);
-
 const { layoutState } = useLayout();
 
-// 监听窗口宽度变化
-watch(() => windowWidth.value, (newValue) => {
-    // layoutState.staticMenuDesktopInactive.value 为 True 时代表侧边栏收起
-    showFooter.value = newValue > (!layoutState.staticMenuDesktopInactive.value ? 1388 : 1110);
-    miniShow.value = newValue < 620;
+// 表格底部显示
+const showFooter = computed(() => {
+    return windowWidth.value > (!layoutState.staticMenuDesktopInactive.value ? 1388 : 1110);
 });
 
-// 监听侧边栏状态变化
-watch(() => layoutState.staticMenuDesktopInactive.value, (newValue) => {
-    showFooter.value = windowWidth.value > (!newValue ? 1388 : 1110);
+// 迷你显示
+const miniShow = computed(() => {
+    return windowWidth.value < 563;
 });
 
-// 行重新排序
-const onRowReorder = (event: any) => {
+// 行重新排序事件
+const onRowReorder = (event: DataTableRowReorderEvent) => {
+    const { dragIndex, dropIndex } = event;
+    request({
+        url: props.reorderUrl,
+        method: 'POST',
+        params: {
+            leftTarget: tableData.value[dragIndex].orderNum,
+            rightTarget: tableData.value[dropIndex].orderNum
+        }
+    }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
+    });
     tableData.value = event.value;
-};
-
-// 行选中删除
-const deleteRecords = () => {
-    console.log(selectedRecords.value);
 };
 
 // 表数据导出
 const dataTable = ref();
 const exportCSV = () => {
-    dataTable.value.exportCSV();
+    dataTable.value.exportCSV(enableSortedAndSelected.value ? { selectionOnly: true } : undefined);
 };
 
 // 表右键菜单
@@ -144,23 +155,31 @@ const cm = ref();
 const contextMenuSelection = ref();
 
 // 菜单展开
-const onRowContextMenu = (event: any) => {
+const onRowContextMenu = (event: DataTableRowContextMenuEvent) => {
     cm.value.show(event.originalEvent);
 };
 
 // 菜单列表
-const menuModel = ref([
-    {
-        label: '修改',
-        icon: 'pi pi-fw pi-pencil',
-        command: () => modifyRecord(contextMenuSelection)
-    },
-    {
-        label: '删除',
-        icon: 'pi pi-fw pi-times',
-        command: () => deleteRecord(contextMenuSelection)
-    }
-]);
+const menuModel = computed(() => {
+    return [
+        {
+            label: '修改',
+            icon: 'pi pi-fw pi-pencil',
+            command: () => modifyRecord(contextMenuSelection)
+        },
+        {
+            label: '删除',
+            icon: 'pi pi-fw pi-times',
+            command: () => deleteRecord(contextMenuSelection)
+        }
+    ].concat(enableSortedAndSelected.value ? [
+        {
+            label: '删除选中项',
+            icon: 'pi pi-fw pi-trash',
+            command: () => deleteRecordsDialog.value = true
+        }
+    ] : []);
+});
 
 // 修改逻辑
 const modifyRecord = (record: any) => {
@@ -171,6 +190,15 @@ const modifyRecord = (record: any) => {
 const deleteRecord = (record: any) => {
     tableData.value = tableData.value.filter((p: any) => p.baseId !== record.value.baseId);
     contextMenuSelection.value = null;
+};
+
+// 行选中删除
+const deleteRecordsDialog = ref(false);
+const deleteRecords = () => {
+    console.log(selectedRecords.value);
+    deleteRecordsDialog.value = false;
+    dataInit();
+    selectedRecords.value.length = 0;
 };
 </script>
 
@@ -205,7 +233,7 @@ const deleteRecord = (record: any) => {
                    @rowReorder="onRowReorder">
             <template #header>
                 <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                    <span class="text-xl text-900 font-bold">{{props.tableName}}</span>
+                    <span class="text-xl text-900 font-bold">{{ props.tableName }}</span>
                     <div class="flex gap-4">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"/>
@@ -215,9 +243,6 @@ const deleteRecord = (record: any) => {
                         <!-- 刷新按钮 -->
                         <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
                         <!-- 修改按钮 -->
-                        <Button v-if="!miniShow && enableSortedAndSelected" icon="pi pi-trash" raised rounded
-                                @click="deleteRecords"/>
-                        <!-- 删除按钮 -->
                         <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
                                 @click="switchedAndSelectedToggle"/>
                         <!-- 配置按钮 -->
@@ -228,11 +253,8 @@ const deleteRecord = (record: any) => {
                                     <!-- 刷新按钮 -->
                                     <Button v-if="miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
                                     <!-- 修改按钮 -->
-                                    <Button v-if="miniShow" icon="pi pi-pencil" raised rounded
+                                    <Button v-if="miniShow" icon="pi pi-bars" raised rounded
                                             @click="switchedAndSelectedToggle"/>
-                                    <!-- 删除按钮 -->
-                                    <Button v-if="miniShow && enableSortedAndSelected" icon="pi pi-trash" raised rounded
-                                            @click="deleteRecords"/>
                                     <Button icon="pi pi-upload" raised rounded
                                             @click="exportCSV"/>
                                 </div>
@@ -266,8 +288,9 @@ const deleteRecord = (record: any) => {
                 </div>
             </template>
             <template v-if="showFooter" #paginatorstart>
-                <label>当前显示第 {{ dataTableStyle.currentPage * dataTableStyle.rowsPerPage }} 至
-                    {{ (dataTableStyle.currentPage + 1) * dataTableStyle.rowsPerPage }} 项，共 {{ totalRecords }}
+                <label>当前显示第 {{ (dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage + 1 }} 至
+                    {{ Math.min(dataTableStyle.currentPage * dataTableStyle.rowsPerPage, totalRecords) }} 项，共
+                    {{ totalRecords }}
                     条记录</label>
             </template>
             <template v-if="showFooter" #paginatorend>
@@ -296,6 +319,34 @@ const deleteRecord = (record: any) => {
                     :reorderableColumn="false"
                     sortable=""></Column>
         </DataTable>
+        <Dialog
+            v-model:visible="deleteRecordsDialog"
+            class="w-auto"
+            header="确认删除吗?"
+            modal
+        >
+            <div class="flex align-items-center justify-content-left mt-3">
+                <i class="pi pi-exclamation-triangle mr-3 text-3xl"/>
+                <span v-if="selectedRecords"
+                >共有
+              <b>{{ selectedRecords.length }} </b> 条的数据将被删除，确认删除吗?</span
+                >
+            </div>
+            <template #footer>
+                <Button
+                    class="p-button-text"
+                    icon="pi pi-times"
+                    label="没有"
+                    @click="deleteRecordsDialog = false"
+                />
+                <Button
+                    class="p-button-text"
+                    icon="pi pi-check"
+                    label="是的"
+                    @click="deleteRecords"
+                />
+            </template>
+        </Dialog>
     </div>
 </template>
 

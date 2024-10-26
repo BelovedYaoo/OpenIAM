@@ -13,7 +13,7 @@ const filedList = ref<Array<ColumnProps>>([
 </script>
 
 <template>
-    <CustomDataTable table-name="账户" :data-url="'/acc/queryAll'" :filed-list="filedList"/>
+    <CustomDataTable table-name="账户" :data-url="'/acc/queryAll'" :reorder-url="'/acc/reorder'" :filed-list="filedList"/>
 </template>
 
 <style scoped>
