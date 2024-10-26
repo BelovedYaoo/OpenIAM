@@ -19,15 +19,15 @@ export const responseToastConfig = (response: AxiosResponse<any>, duringSecond: 
  * 将类名添加到指定id的元素上，并设置延时移除
  * @param id 需要添加的元素id名
  * @param className 被添加的类名
- * @param second 延时时长(默认5秒延时)
+ * @param duringSecond 延时时长(默认5秒延时)
  */
-export const addClassById = (id: string, className: string, second: number = 5): void => {
+export const addClassById = (id: string, className: string, duringSecond: number = 5): void => {
     const element: HTMLElement | null = document.getElementById(id);
     if (element) {
         element.classList.add(className);
         setTimeout((): void => {
             element.classList.remove(className);
-        }, second * 1000);
+        }, duringSecond * 1000);
     }
 };
 

@@ -23,7 +23,7 @@ const passwordRegex = /^.{5,20}$/;
 const phoneRegex = /^1[0-9]{10}$/;
 const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
-const errorToast = (className, summary, detail) => {
+const errorToast = (className:string, summary:string, detail:string) => {
     toast.add({
         severity: 'error',
         summary: summary,

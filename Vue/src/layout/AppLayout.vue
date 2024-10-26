@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
@@ -75,6 +75,10 @@ const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
 onMounted(() => {
     getWindowResize();
     window.addEventListener('resize', getWindowResize);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', getWindowResize);
 });
 
 // 获取屏幕尺寸

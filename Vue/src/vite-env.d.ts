@@ -27,9 +27,9 @@ declare module '@/service/globalQuote' {
     import { AppConfig } from '@/service/globalQuote';
     export const globalConfig: AppConfig;
 
-    export const responseToastConfig: (response: any, duringSecond: number) => any;
+    export const responseToastConfig: (response: any, duringSecond: number = 3) => any;
 
-    export const addClassById: (id: string, className: string, second: number) => void;
+    export const addClassById: (id: string, className: string, second: number = 5) => void;
 }
 
 declare module 'js-cookie' {
