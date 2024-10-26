@@ -58,7 +58,6 @@ public abstract class BaseFiled implements Serializable {
      */
     @Column()
     @ColumnComment("数据序号，用于数据排序")
-    @Index(type = IndexTypeEnum.UNIQUE)
     @ColumnType(value = MysqlTypeConstant.INT)
     protected Integer orderNum;
 

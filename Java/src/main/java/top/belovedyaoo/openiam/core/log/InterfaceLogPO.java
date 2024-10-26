@@ -85,7 +85,7 @@ public class InterfaceLogPO extends BaseFiled {
      * 方法执行结果
      */
     @ColumnComment("每条日志记录的方法执行结果")
-    @ColumnType(value = MysqlTypeConstant.TEXT)
+    @ColumnType(value = MysqlTypeConstant.MEDIUMTEXT)
     private String result;
 
     /**
