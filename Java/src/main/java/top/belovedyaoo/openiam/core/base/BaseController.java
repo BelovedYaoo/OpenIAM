@@ -1,6 +1,8 @@
 package top.belovedyaoo.openiam.core.base;
 
 import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -8,19 +10,22 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import top.belovedyaoo.openiam.core.log.BusinessType;
 import top.belovedyaoo.openiam.core.log.InterfaceLog;
 import top.belovedyaoo.openiam.core.result.Result;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * 基础控制器
  *
  * @author BelovedYaoo
- * @version 1.2
+ * @version 1.3
  */
 @RequiredArgsConstructor
 public abstract class BaseController<T extends BaseFiled> {
@@ -92,7 +97,9 @@ public abstract class BaseController<T extends BaseFiled> {
     @GetMapping("/queryAll")
     @InterfaceLog(persistence = false, print = true, businessType = BusinessType.SELECT, identifierCode = "baseId", interfaceName = "BaseController.queryAll", interfaceDesc = "查询")
     public Result queryAll() {
-        return Result.success().singleData(baseMapper.selectAll());
+        QueryWrapper queryWrapper = QueryWrapper.create().select().from(getOriginalClass()).orderBy(BaseFiled.ORDER_NUM, true);
+        List<T> queryList = baseMapper.selectListByQuery(queryWrapper);
+        return Result.success().singleData(queryList);
     }
 
     /**
@@ -141,7 +148,7 @@ public abstract class BaseController<T extends BaseFiled> {
      * @return 操作结果
      */
     @PostMapping("/add")
-    public Result addCourseData(@RequestBody T entity) {
+    public Result add(@RequestBody T entity) {
         T typedEntity = convertTo(entity);
         // 防止注入
         entity.baseId(null);
@@ -150,6 +157,39 @@ public abstract class BaseController<T extends BaseFiled> {
             return Result.success().message("数据新增成功");
         }
         return Result.failed().message("数据新增失败");
+    }
+
+    /**
+     * 重新排序
+     *
+     * @param leftTarget  左目标
+     * @param rightTarget 右目标
+     *
+     * @return 排序结果
+     */
+    @PostMapping("/reorder")
+    public Result reorder(@RequestParam(value = "leftTarget") int leftTarget, @RequestParam(value = "rightTarget") int rightTarget) {
+
+        TransactionStatus transactionStatus = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
+
+        boolean isAsc = leftTarget > rightTarget;
+        QueryWrapper queryWrapper = QueryWrapper.create().where(BaseFiled.ORDER_NUM + " BETWEEN " + Math.min(leftTarget, rightTarget) + " AND " + Math.max(leftTarget, rightTarget)).orderBy(BaseFiled.ORDER_NUM, true);
+        List<T> originalList = baseMapper.selectListByQuery(queryWrapper);
+
+        // 单独拆出 OrderNum 到一个List
+        List<Integer> orderNumList = new ArrayList<>(originalList.stream().map(BaseFiled::orderNum).toList());
+        // 平移 OrderNum 列表
+        Collections.rotate(orderNumList, isAsc ? -1 : 1);
+
+        for (int i = 0; i < originalList.size(); i++) {
+            UpdateChain.of(getOriginalClass())
+                    .set(BaseFiled.ORDER_NUM, orderNumList.get(i))
+                    .where(BaseFiled.BASE_ID + " = '" + originalList.get(i).baseId() + "'")
+                    .update();
+        }
+
+        platformTransactionManager.commit(transactionStatus);
+        return Result.success().message("数据排序成功");
     }
 
 }

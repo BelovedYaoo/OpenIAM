@@ -32,7 +32,7 @@ import java.util.Date;
  * Accessors用于去除Getter、Setter前缀并开启链式调用，使Getter、Setter返回当前对象
  *
  * @author BelovedYaoo
- * @version 1.6
+ * @version 1.7
  */
 @Data
 @SuperBuilder
@@ -40,6 +40,10 @@ import java.util.Date;
 @Getter(onMethod_ = @JsonGetter)
 @Accessors(fluent = true, chain = true)
 public abstract class BaseFiled implements Serializable {
+
+    public static final String BASE_ID = "base_id";
+
+    public static final String ORDER_NUM = "order_num";
 
     /**
      * 基础ID
