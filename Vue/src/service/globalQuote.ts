@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { ToastMessageOptions } from 'primevue/toast';
+import { AppConfig } from '@/service/globalQuote';
 
 /**
  * 将Axios请求响应体转换为PrimeVue的Toast配置
@@ -32,19 +33,21 @@ export const addClassById = (id: string, className: string, duringSecond: number
 };
 
 /**
- * 全局配置接口
- */
-export interface AppConfig {
-    appName: string;
-    appTokenName: string;
-}
-
-/**
  * 全局配置
  */
 export const globalConfig: AppConfig = {
     // 应用名称
     appName: 'OpenIAM',
     // Token名称
-    appTokenName: 'openToken'
+    appTokenName: 'openToken',
+    // 查询所有URL
+    queryAllUrl: '/queryAll',
+    // 更新URL
+    updateUrl: '/update',
+    // 删除URL
+    deleteUrl: '/delete',
+    // 新增URL
+    addUrl: '/add',
+    // 重新排序URL
+    reorderUrl: '/reorder',
 };

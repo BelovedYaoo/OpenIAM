@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, onMounted, Ref, ref, watch } from 'vue';
 import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
 import request from '@/service/request';
@@ -8,7 +8,7 @@ import { ColumnProps } from 'primevue/column';
 import { storeState, useCounterStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
 import { AxiosResponse } from 'axios';
-import { responseToastConfig } from '@/service/globalQuote';
+import { globalConfig, responseToastConfig } from '@/service/globalQuote';
 import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
@@ -18,19 +18,55 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    baseUrl: {
+        type: String
+    },
     dataUrl: {
-        type: String,
-        required: true
+        type: String
     },
     reorderUrl: {
-        type: String,
-        required: true
+        type: String
+    },
+    deleteUrl: {
+        type: String
+    },
+    modifyUrl: {
+        type: String
     },
     filedList: {
         type: Array<ColumnProps>,
         required: true
     }
 });
+
+// 挂载之前
+onBeforeMount(() => {
+    initFilters();
+    urlInit();
+});
+
+onMounted(() => {
+    dataInit();
+});
+
+const dataUri = ref();
+const reorderUri = ref();
+const deleteUri = ref();
+const modifyUri = ref();
+
+const urlInit = () => {
+    if (props.baseUrl) {
+        dataUri.value = `/${props.baseUrl}${globalConfig.queryAllUrl}`;
+        reorderUri.value = `/${props.baseUrl}${globalConfig.reorderUrl}`;
+        deleteUri.value = `/${props.baseUrl}${globalConfig.deleteUrl}`;
+        modifyUri.value = `/${props.baseUrl}${globalConfig.updateUrl}`;
+    } else {
+        dataUri.value = props.baseUrl;
+        reorderUri.value = props.reorderUrl;
+        deleteUri.value = props.deleteUrl;
+        modifyUri.value = props.modifyUrl;
+    }
+};
 
 // 过滤器
 const keywordFilters = ref();
@@ -87,20 +123,14 @@ watch(() => dataTableStyle.value.rowsPerPage, (newValue, oldValue) => {
     dataTableStyle.value.currentPage = Math.max(Math.ceil(((dataTableStyle.value.currentPage - 1) * oldValue + 1) / newValue), 1);
 });
 
-// 挂载
-onBeforeMount(() => {
-    initFilters();
-    dataInit();
-});
-
 // 数据初始化
 const tableData = ref();
 const dataInit = () => {
     request({
-        url: props.dataUrl,
+        url: dataUri.value,
         method: 'GET'
     }).then((response: AxiosResponse) => {
-        toast.add(responseToastConfig(response));
+        // toast.add(responseToastConfig(response));
         tableData.value = response.data.data as Array<Account>;
         totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
         totalRecords.value = tableData.value.length;
@@ -132,7 +162,7 @@ const miniShow = computed(() => {
 const onRowReorder = (event: DataTableRowReorderEvent) => {
     const { dragIndex, dropIndex } = event;
     request({
-        url: props.reorderUrl,
+        url: reorderUri.value,
         method: 'POST',
         params: {
             leftTarget: tableData.value[dragIndex].orderNum,
@@ -172,7 +202,7 @@ const menuModel = computed(() => {
             icon: 'pi pi-fw pi-times',
             command: () => deleteRecord(contextMenuSelection)
         }
-    ].concat(enableSortedAndSelected.value ? [
+    ].concat((enableSortedAndSelected.value && selectedRecords.value.length > 0) ? [
         {
             label: '删除选中项',
             icon: 'pi pi-fw pi-trash',
@@ -187,24 +217,45 @@ const modifyRecord = (record: any) => {
 };
 
 // 删除逻辑
-const deleteRecord = (record: any) => {
-    tableData.value = tableData.value.filter((p: any) => p.baseId !== record.value.baseId);
-    contextMenuSelection.value = null;
+const deleteRecord = (record: Ref<BaseFiled>) => {
+    request({
+        url: deleteUri.value,
+        method: 'POST',
+        data: [record.value.baseId]
+    }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
+        contextMenuSelection.value = null;
+        dataInit();
+    });
 };
 
 // 行选中删除
 const deleteRecordsDialog = ref(false);
 const deleteRecords = () => {
-    console.log(selectedRecords.value);
-    deleteRecordsDialog.value = false;
-    dataInit();
-    selectedRecords.value.length = 0;
+    request({
+        url: deleteUri.value,
+        method: 'POST',
+        data: selectedRecords.value.map((r: BaseFiled) => r.baseId)
+    }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
+        deleteRecordsDialog.value = false;
+        dataInit();
+        selectedRecords.value.length = 0;
+    });
+};
+
+// 移除右键菜单的隐藏元素
+const onContextMenuShow = () => {
+    const menuLinks = document.getElementsByClassName('p-menuitem-link');
+    for (let i = 0; i < menuLinks.length; i++) {
+        menuLinks[i].removeAttribute('aria-hidden');
+    }
 };
 </script>
 
 <template>
     <div class="card">
-        <ContextMenu ref="cm" :model="menuModel"/>
+        <ContextMenu ref="cm" :model="menuModel" @show="onContextMenuShow"/>
         <DataTable ref="dataTable"
                    v-model:contextMenuSelection="contextMenuSelection"
                    v-model:selection="selectedRecords"

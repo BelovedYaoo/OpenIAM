@@ -24,7 +24,15 @@ declare module '@/service/store' {
 }
 
 declare module '@/service/globalQuote' {
-    import { AppConfig } from '@/service/globalQuote';
+    export interface AppConfig {
+        appName: string;
+        appTokenName: string;
+        queryAllUrl: string;
+        updateUrl: string;
+        deleteUrl: string;
+        addUrl: string;
+        reorderUrl: string;
+    }
     export const globalConfig: AppConfig;
 
     export const responseToastConfig: (response: any, duringSecond: number = 3) => any;
