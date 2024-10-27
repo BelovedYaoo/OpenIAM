@@ -1,72 +1,26 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
-import { computed, onBeforeMount, onMounted, Ref, ref, watch } from 'vue';
+import { computed, onBeforeMount, Ref, ref, watch } from 'vue';
 import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
-import request from '@/service/request';
-import { ColumnProps } from 'primevue/column';
-import { storeState, useCounterStore } from '@/service/store';
+import { customTableState, storeState, useCounterStore, useCustomTableStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
-import { AxiosResponse } from 'axios';
-import { globalConfig, responseToastConfig } from '@/service/globalQuote';
-import { useToast } from 'primevue/usetoast';
 
-const toast = useToast();
+interface customTableProps {
+    tableName: string,
+    tableData: BaseFiled[],
+    onRowReorder: (event: DataTableRowReorderEvent) => object,
+    onRowModify: (record: Ref<BaseFiled>) => object,
+    onRowDelete: (record: Ref<BaseFiled>) => object,
+    onRowSelectDelete: (record: Ref<BaseFiled[]>) => object,
+}
 
-const props = defineProps({
-    tableName: {
-        type: String,
-        required: true,
-    },
-    baseUrl: {
-        type: String
-    },
-    dataUrl: {
-        type: String
-    },
-    reorderUrl: {
-        type: String
-    },
-    deleteUrl: {
-        type: String
-    },
-    modifyUrl: {
-        type: String
-    },
-    filedList: {
-        type: Array<ColumnProps>,
-        required: true
-    }
-});
+const props = defineProps<customTableProps>();
 
 // 挂载之前
 onBeforeMount(() => {
     initFilters();
-    urlInit();
 });
-
-onMounted(() => {
-    dataInit();
-});
-
-const dataUri = ref();
-const reorderUri = ref();
-const deleteUri = ref();
-const modifyUri = ref();
-
-const urlInit = () => {
-    if (props.baseUrl) {
-        dataUri.value = `/${props.baseUrl}${globalConfig.queryAllUrl}`;
-        reorderUri.value = `/${props.baseUrl}${globalConfig.reorderUrl}`;
-        deleteUri.value = `/${props.baseUrl}${globalConfig.deleteUrl}`;
-        modifyUri.value = `/${props.baseUrl}${globalConfig.updateUrl}`;
-    } else {
-        dataUri.value = props.baseUrl;
-        reorderUri.value = props.reorderUrl;
-        deleteUri.value = props.deleteUrl;
-        modifyUri.value = props.modifyUrl;
-    }
-};
 
 // 过滤器
 const keywordFilters = ref();
@@ -83,8 +37,8 @@ const switchedAndSelectedToggle = () => {
     selectedRecords.value = [];
 };
 
-// 选中记录
-const selectedRecords = ref();
+const customTableStore = useCustomTableStore();
+const { selectedRecords,contextMenuSelection } = storeToRefs<customTableState>(customTableStore);
 
 // 样式设置浮窗
 const paletteOp = ref();
@@ -118,24 +72,15 @@ const totalRecords = ref(0);
 // 监听页面数量变化
 watch(() => dataTableStyle.value.rowsPerPage, (newValue, oldValue) => {
     // 根据页面数量计算总页数
-    totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
+    totalPages.value = Math.ceil(props.tableData.length / dataTableStyle.value.rowsPerPage);
     // 重置当前页
     dataTableStyle.value.currentPage = Math.max(Math.ceil(((dataTableStyle.value.currentPage - 1) * oldValue + 1) / newValue), 1);
 });
 
-// 数据初始化
-const tableData = ref();
-const dataInit = () => {
-    request({
-        url: dataUri.value,
-        method: 'GET'
-    }).then((response: AxiosResponse) => {
-        // toast.add(responseToastConfig(response));
-        tableData.value = response.data.data as Array<Account>;
-        totalPages.value = Math.ceil(tableData.value.length / dataTableStyle.value.rowsPerPage);
-        totalRecords.value = tableData.value.length;
-    });
-};
+watch(() => props.tableData, () => {
+    totalPages.value = Math.ceil(props.tableData.length / dataTableStyle.value.rowsPerPage);
+    totalRecords.value = props.tableData.length;
+});
 
 // 当通过DataTable分页器切换分页时，通知底部分页器同步
 const onPageChange = (event: DataTablePageEvent) => {
@@ -160,18 +105,7 @@ const miniShow = computed(() => {
 
 // 行重新排序事件
 const onRowReorder = (event: DataTableRowReorderEvent) => {
-    const { dragIndex, dropIndex } = event;
-    request({
-        url: reorderUri.value,
-        method: 'POST',
-        params: {
-            leftTarget: tableData.value[dragIndex].orderNum,
-            rightTarget: tableData.value[dropIndex].orderNum
-        }
-    }).then((response: AxiosResponse) => {
-        toast.add(responseToastConfig(response));
-    });
-    tableData.value = event.value;
+    props.onRowReorder(event);
 };
 
 // 表数据导出
@@ -182,7 +116,6 @@ const exportCSV = () => {
 
 // 表右键菜单
 const cm = ref();
-const contextMenuSelection = ref();
 
 // 菜单展开
 const onRowContextMenu = (event: DataTableRowContextMenuEvent) => {
@@ -206,42 +139,24 @@ const menuModel = computed(() => {
         {
             label: '删除选中项',
             icon: 'pi pi-fw pi-trash',
-            command: () => deleteRecordsDialog.value = true
+            command: () => deleteRecords(selectedRecords)
         }
     ] : []);
 });
 
 // 修改逻辑
-const modifyRecord = (record: any) => {
-    console.log(record.value);
+const modifyRecord = (record: Ref<BaseFiled>) => {
+    props.onRowModify(record);
 };
 
 // 删除逻辑
 const deleteRecord = (record: Ref<BaseFiled>) => {
-    request({
-        url: deleteUri.value,
-        method: 'POST',
-        data: [record.value.baseId]
-    }).then((response: AxiosResponse) => {
-        toast.add(responseToastConfig(response));
-        contextMenuSelection.value = null;
-        dataInit();
-    });
+    props.onRowDelete(record);
 };
 
 // 行选中删除
-const deleteRecordsDialog = ref(false);
-const deleteRecords = () => {
-    request({
-        url: deleteUri.value,
-        method: 'POST',
-        data: selectedRecords.value.map((r: BaseFiled) => r.baseId)
-    }).then((response: AxiosResponse) => {
-        toast.add(responseToastConfig(response));
-        deleteRecordsDialog.value = false;
-        dataInit();
-        selectedRecords.value.length = 0;
-    });
+const deleteRecords = (selectedRecords: Ref<BaseFiled[]>) => {
+    props.onRowSelectDelete(selectedRecords);
 };
 
 // 移除右键菜单的隐藏元素
@@ -271,7 +186,7 @@ const onContextMenuShow = () => {
                    :scrollHeight="`${windowHeight - 400}px`"
                    :showGridlines="dataTableStyle.showGridlines"
                    :stripedRows="dataTableStyle.stripedRows"
-                   :value="tableData"
+                   :value="props.tableData"
                    contextMenu
                    current-page-report-template="{currentPage} / {totalPages}"
                    paginator
@@ -292,7 +207,7 @@ const onContextMenuShow = () => {
                                        placeholder="输入以搜索" type="text"/>
                         </span>
                         <!-- 刷新按钮 -->
-                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
+                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="console.log('refresh!')"/>
                         <!-- 修改按钮 -->
                         <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
                                 @click="switchedAndSelectedToggle"/>
@@ -302,7 +217,8 @@ const onContextMenuShow = () => {
                             <div class="flex flex-column gap-3">
                                 <div class="flex flex-row gap-3">
                                     <!-- 刷新按钮 -->
-                                    <Button v-if="miniShow" icon="pi pi-refresh" raised rounded @click="dataInit"/>
+                                    <Button v-if="miniShow" icon="pi pi-refresh" raised rounded
+                                            @click="console.log('refresh!')"/>
                                     <!-- 修改按钮 -->
                                     <Button v-if="miniShow" icon="pi pi-bars" raised rounded
                                             @click="switchedAndSelectedToggle"/>
@@ -361,43 +277,8 @@ const onContextMenuShow = () => {
                     rowReorder/>
             <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
                     selectionMode="multiple"></Column>
-            <!-- 循环渲染 -->
-            <Column v-for="filed in props.filedList"
-                    :key="filed.field"
-                    :field="filed.field"
-                    :header="filed.header"
-                    :headerStyle="filed?.style"
-                    :reorderableColumn="false"
-                    sortable=""></Column>
+            <slot name="column"></slot>
         </DataTable>
-        <Dialog
-            v-model:visible="deleteRecordsDialog"
-            class="w-auto"
-            header="确认删除吗?"
-            modal
-        >
-            <div class="flex align-items-center justify-content-left mt-3">
-                <i class="pi pi-exclamation-triangle mr-3 text-3xl"/>
-                <span v-if="selectedRecords"
-                >共有
-              <b>{{ selectedRecords.length }} </b> 条的数据将被删除，确认删除吗?</span
-                >
-            </div>
-            <template #footer>
-                <Button
-                    class="p-button-text"
-                    icon="pi pi-times"
-                    label="没有"
-                    @click="deleteRecordsDialog = false"
-                />
-                <Button
-                    class="p-button-text"
-                    icon="pi pi-check"
-                    label="是的"
-                    @click="deleteRecords"
-                />
-            </template>
-        </Dialog>
     </div>
 </template>
 

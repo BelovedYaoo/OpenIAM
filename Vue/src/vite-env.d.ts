@@ -17,9 +17,13 @@ declare module '@/service/layout' {
 declare module '@/service/store' {
     import { StoreGeneric } from 'pinia';
     export function useCounterStore();
+    export function useCustomTableStore();
     export interface storeState extends StoreGeneric {
         windowWidth: number
         windowHeight: number
+    }
+    export interface customTableState extends StoreGeneric {
+        contextMenuSelection: Array<BaseFiled>
     }
 }
 
