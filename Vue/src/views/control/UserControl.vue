@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, Ref, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import CustomDataTable from '@/components/CustomDataTable.vue';
 import { DataTableRowReorderEvent } from 'primevue/datatable';
 import { ColumnProps } from 'primevue/column';
@@ -7,17 +7,12 @@ import request from '@/service/request';
 import { AxiosResponse } from 'axios';
 import { responseToastConfig } from '@/service/globalQuote';
 import { useToast } from 'primevue/usetoast';
-import { customTableState, useCustomTableStore } from '@/service/store';
-import { storeToRefs } from 'pinia';
 
 const toast = useToast();
 
 onBeforeMount(() => {
     dataInit(); // 确保数据加载完成后再挂载
 });
-
-const store = useCustomTableStore();
-const { selectedRecords } = storeToRefs<customTableState>(store);
 
 // 数据初始化
 const tableData = ref<Account[]>([]);
@@ -31,27 +26,14 @@ const dataInit = () => {
 };
 
 // 删除逻辑
-const deleteRecord = (record: Ref<BaseFiled>) => {
+const deleteRecord = async (records: BaseFiled[]) => {
     request({
         url: '/acc/delete',
         method: 'POST',
-        data: [record.value.baseId]
+        data: records.map(r => r.baseId)
     }).then((response: AxiosResponse) => {
         toast.add(responseToastConfig(response));
         dataInit();
-    });
-};
-
-// 行选中删除
-const deleteRecords = () => {
-    request({
-        url: '/acc/delete',
-        method: 'POST',
-        data: selectedRecords.value.map((r: BaseFiled) => r.baseId)
-    }).then((response: AxiosResponse) => {
-        toast.add(responseToastConfig(response));
-        dataInit();
-        selectedRecords.value = [];
     });
 };
 
@@ -81,8 +63,11 @@ const filedList = ref<Array<ColumnProps>>([
 </script>
 
 <template>
-    <CustomDataTable :on-row-delete="deleteRecord" :on-row-modify="onRowReorder" :on-row-reorder="onRowReorder"
-                     :on-row-select-delete="deleteRecords" :table-data="tableData" table-name="账户">
+    <CustomDataTable :on-row-delete="deleteRecord"
+                     :on-row-modify="onRowReorder"
+                     :on-row-reorder="onRowReorder"
+                     :table-data="tableData"
+                     table-name="账户">
         <template #column>
             <Column v-for="filed in filedList"
                     :key="filed.field"

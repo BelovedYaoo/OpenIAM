@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
-import { computed, onBeforeMount, Ref, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
-import { customTableState, storeState, useCounterStore, useCustomTableStore } from '@/service/store';
+import { storeState, useCounterStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
 
 interface customTableProps {
     tableName: string,
     tableData: BaseFiled[],
     onRowReorder: (event: DataTableRowReorderEvent) => object,
-    onRowModify: (record: Ref<BaseFiled>) => object,
-    onRowDelete: (record: Ref<BaseFiled>) => object,
-    onRowSelectDelete: (record: Ref<BaseFiled[]>) => object,
+    onRowModify: (record: BaseFiled) => object,
+    onRowDelete: (record: BaseFiled[]) => object,
 }
 
 const props = defineProps<customTableProps>();
@@ -37,8 +36,8 @@ const switchedAndSelectedToggle = () => {
     selectedRecords.value = [];
 };
 
-const customTableStore = useCustomTableStore();
-const { selectedRecords,contextMenuSelection } = storeToRefs<customTableState>(customTableStore);
+const selectedRecords = ref([]);
+const contextMenuSelection = ref();
 
 // 样式设置浮窗
 const paletteOp = ref();
@@ -128,36 +127,21 @@ const menuModel = computed(() => {
         {
             label: '修改',
             icon: 'pi pi-fw pi-pencil',
-            command: () => modifyRecord(contextMenuSelection)
+            command: () => modifyRecord(contextMenuSelection.value)
         },
         {
             label: '删除',
             icon: 'pi pi-fw pi-times',
-            command: () => deleteRecord(contextMenuSelection)
+            command: () => deleteRecords([contextMenuSelection.value])
         }
     ].concat((enableSortedAndSelected.value && selectedRecords.value.length > 0) ? [
         {
             label: '删除选中项',
             icon: 'pi pi-fw pi-trash',
-            command: () => deleteRecords(selectedRecords)
+            command: () => deleteRecords(selectedRecords.value)
         }
     ] : []);
 });
-
-// 修改逻辑
-const modifyRecord = (record: Ref<BaseFiled>) => {
-    props.onRowModify(record);
-};
-
-// 删除逻辑
-const deleteRecord = (record: Ref<BaseFiled>) => {
-    props.onRowDelete(record);
-};
-
-// 行选中删除
-const deleteRecords = (selectedRecords: Ref<BaseFiled[]>) => {
-    props.onRowSelectDelete(selectedRecords);
-};
 
 // 移除右键菜单的隐藏元素
 const onContextMenuShow = () => {
@@ -166,6 +150,19 @@ const onContextMenuShow = () => {
         menuLinks[i].removeAttribute('aria-hidden');
     }
 };
+
+// 修改逻辑
+const modifyRecord = (modifyRecord: BaseFiled) => {
+    props.onRowModify(modifyRecord);
+};
+
+// 删除逻辑
+const deleteRecords = (deleteRecords: BaseFiled[]) => {
+    props.onRowDelete(deleteRecords);
+    // 从 selectedRecords 中去掉 deleteRecords 中的
+    selectedRecords.value = selectedRecords.value.filter(selectedRecord => !deleteRecords.includes(selectedRecord));
+};
+
 </script>
 
 <template>

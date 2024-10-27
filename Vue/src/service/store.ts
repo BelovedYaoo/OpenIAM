@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { customTableState, storeState } from '@/service/store';
+import { storeState } from '@/service/store';
 
 export const useCounterStore = defineStore('main', {
     state: (): storeState => {
@@ -9,15 +9,4 @@ export const useCounterStore = defineStore('main', {
         };
     },
     actions: {},
-});
-
-export const useCustomTableStore = defineStore('customTable', {
-    state: (): customTableState => {
-        return {
-            contextMenuSelection: null,
-            selectedRecords: []
-        };
-    },
-    actions: {
-    },
 });
