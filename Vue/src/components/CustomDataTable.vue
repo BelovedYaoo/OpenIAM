@@ -8,10 +8,12 @@ import { storeToRefs } from 'pinia';
 
 interface customTableProps {
     tableName: string,
-    tableData: BaseFiled[],
+    tableData: Array<BaseFiled>,
+    onTableDataRefresh: () => object,
     onRowReorder: (event: DataTableRowReorderEvent) => object,
     onRowModify: (record: BaseFiled) => object,
     onRowDelete: (record: BaseFiled[]) => object,
+    onOrderSwap: (record: BaseFiled[]) => object,
 }
 
 const props = defineProps<customTableProps>();
@@ -146,7 +148,14 @@ const menuModel = computed(() => {
             icon: 'pi pi-fw pi-trash',
             command: () => deleteRecords(selectedRecords.value)
         }
-    ] : []);
+    ] : [])
+        .concat((enableSortedAndSelected.value && selectedRecords.value.length === 2) ? [
+            {
+                label: '交换顺序',
+                icon: 'pi pi-fw pi-sync',
+                command: () => orderSwap(selectedRecords.value)
+            }
+        ] : []);
 });
 
 // 移除右键菜单的隐藏元素
@@ -155,6 +164,11 @@ const onContextMenuShow = () => {
     for (let i = 0; i < menuLinks.length; i++) {
         menuLinks[i].removeAttribute('aria-hidden');
     }
+};
+
+// 刷新逻辑
+const onTableDataRefresh = () => {
+    props.onTableDataRefresh();
 };
 
 // 修改逻辑
@@ -169,6 +183,11 @@ const deleteRecords = (deleteRecords: BaseFiled[]) => {
     selectedRecords.value = selectedRecords.value.filter(selectedRecord => !deleteRecords.includes(selectedRecord));
 };
 
+// 顺序交换逻辑
+const orderSwap = (swapRecords: BaseFiled[]) => {
+    props.onOrderSwap(swapRecords);
+    selectedRecords.value = [];
+};
 </script>
 
 <template>
@@ -210,7 +229,7 @@ const deleteRecords = (deleteRecords: BaseFiled[]) => {
                                        placeholder="输入以搜索" type="text"/>
                         </span>
                         <!-- 刷新按钮 -->
-                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="console.log('refresh!')"/>
+                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="onTableDataRefresh"/>
                         <!-- 修改按钮 -->
                         <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
                                 @click="switchedAndSelectedToggle"/>
@@ -221,7 +240,7 @@ const deleteRecords = (deleteRecords: BaseFiled[]) => {
                                 <div class="flex flex-row gap-3">
                                     <!-- 刷新按钮 -->
                                     <Button v-if="miniShow" icon="pi pi-refresh" raised rounded
-                                            @click="console.log('refresh!')"/>
+                                            @click="onTableDataRefresh"/>
                                     <!-- 修改按钮 -->
                                     <Button v-if="miniShow" icon="pi pi-bars" raised rounded
                                             @click="switchedAndSelectedToggle"/>

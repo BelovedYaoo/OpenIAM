@@ -53,6 +53,28 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
     tableData.value = event.value;
 };
 
+// 刷新逻辑
+const onTableDataRefresh = () => {
+    dataInit();
+};
+
+// 顺序交换逻辑
+const onOrderSwap = (swapRecords: BaseFiled[]) => {
+    request({
+        url: '/acc/orderSwap',
+        method: 'POST',
+        params: {
+            leftTargetBaseId: swapRecords[0].baseId,
+            leftTargetOrderNum: swapRecords[0].orderNum,
+            rightTargetBaseId: swapRecords[1].baseId,
+            rightTargetOrderNum: swapRecords[1].orderNum
+        }
+    }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
+        dataInit();
+    });
+};
+
 // 字段列表
 const filedList = ref<Array<ColumnProps>>([
     { field: 'openId', header: 'OpenID', style: 'width:20%;min-width:10rem;' },
@@ -60,12 +82,15 @@ const filedList = ref<Array<ColumnProps>>([
     { field: 'email', header: '邮箱', style: 'width:20%;min-width:10rem;' },
     { field: 'nickname', header: '昵称', style: 'width:10%;min-width:7rem;' },
 ]);
+
 </script>
 
 <template>
-    <CustomDataTable :on-row-delete="onRowDelete"
+    <CustomDataTable :on-order-swap="onOrderSwap"
+                     :on-row-delete="onRowDelete"
                      :on-row-modify="onRowReorder"
                      :on-row-reorder="onRowReorder"
+                     :on-table-data-refresh="onTableDataRefresh"
                      :table-data="tableData"
                      table-name="账户">
         <template #column>
