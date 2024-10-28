@@ -191,117 +191,115 @@ const orderSwap = (swapRecords: BaseFiled[]) => {
 </script>
 
 <template>
-    <div class="card">
-        <ContextMenu ref="cm" :model="menuModel" @show="onContextMenuShow"/>
-        <DataTable ref="dataTable"
-                   v-model:contextMenuSelection="contextMenuSelection"
-                   v-model:selection="selectedRecords"
-                   :class="`p-datatable-${dataTableStyle.size.class}`"
-                   :filters="keywordFilters"
-                   :first="(dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage"
-                   :paginator-template="{
+    <ContextMenu ref="cm" :model="menuModel" @show="onContextMenuShow"/>
+    <DataTable ref="dataTable"
+               v-model:contextMenuSelection="contextMenuSelection"
+               v-model:selection="selectedRecords"
+               :class="`p-datatable-${dataTableStyle.size.class}`"
+               :filters="keywordFilters"
+               :first="(dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage"
+               :paginator-template="{
                        '450px': 'PrevPageLink CurrentPageReport NextPageLink',
                        '570px': 'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink'
                    }"
-                   :reorderableColumns="enableSortedAndSelected"
-                   :rows="dataTableStyle.rowsPerPage"
-                   :scrollHeight="`${windowHeight - 400}px`"
-                   :showGridlines="dataTableStyle.showGridlines"
-                   :stripedRows="dataTableStyle.stripedRows"
-                   :value="props.tableData"
-                   contextMenu
-                   current-page-report-template="{currentPage} / {totalPages}"
-                   paginator
-                   removableSort
-                   scrollable
-                   sortMode="multiple"
-                   tableStyle="min-width: 50rem"
-                   @page="onPageChange"
-                   @rowContextmenu="onRowContextMenu"
-                   @rowReorder="onRowReorder">
-            <template #header>
-                <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                    <span class="text-xl text-900 font-bold">{{ props.tableName }}</span>
-                    <div class="flex gap-4">
+               :reorderableColumns="enableSortedAndSelected"
+               :rows="dataTableStyle.rowsPerPage"
+               :scrollHeight="`${windowHeight - 400}px`"
+               :showGridlines="dataTableStyle.showGridlines"
+               :stripedRows="dataTableStyle.stripedRows"
+               :value="props.tableData"
+               contextMenu
+               current-page-report-template="{currentPage} / {totalPages}"
+               paginator
+               removableSort
+               scrollable
+               sortMode="multiple"
+               tableStyle="min-width: 50rem"
+               @page="onPageChange"
+               @rowContextmenu="onRowContextMenu"
+               @rowReorder="onRowReorder">
+        <template #header>
+            <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+                <span class="text-xl text-900 font-bold">{{ props.tableName }}</span>
+                <div class="flex gap-4">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"/>
                             <InputText v-model="keywordFilters['global'].value" :class="miniShow?'w-10rem':'w-13rem'"
                                        placeholder="输入以搜索" type="text"/>
                         </span>
-                        <!-- 刷新按钮 -->
-                        <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="onTableDataRefresh"/>
-                        <!-- 修改按钮 -->
-                        <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
-                                @click="switchedAndSelectedToggle"/>
-                        <!-- 配置按钮 -->
-                        <Button icon="pi pi-cog" raised rounded @click="paletteToggle"/>
-                        <OverlayPanel ref="paletteOp">
-                            <div class="flex flex-column gap-3">
-                                <div class="flex flex-row gap-3">
-                                    <!-- 刷新按钮 -->
-                                    <Button v-if="miniShow" icon="pi pi-refresh" raised rounded
-                                            @click="onTableDataRefresh"/>
-                                    <!-- 修改按钮 -->
-                                    <Button v-if="miniShow" icon="pi pi-bars" raised rounded
-                                            @click="switchedAndSelectedToggle"/>
-                                    <Button icon="pi pi-upload" raised rounded
-                                            @click="exportCSV"/>
+                    <!-- 刷新按钮 -->
+                    <Button v-if="!miniShow" icon="pi pi-refresh" raised rounded @click="onTableDataRefresh"/>
+                    <!-- 修改按钮 -->
+                    <Button v-if="!miniShow" icon="pi pi-bars" raised rounded
+                            @click="switchedAndSelectedToggle"/>
+                    <!-- 配置按钮 -->
+                    <Button icon="pi pi-cog" raised rounded @click="paletteToggle"/>
+                    <OverlayPanel ref="paletteOp">
+                        <div class="flex flex-column gap-3">
+                            <div class="flex flex-row gap-3">
+                                <!-- 刷新按钮 -->
+                                <Button v-if="miniShow" icon="pi pi-refresh" raised rounded
+                                        @click="onTableDataRefresh"/>
+                                <!-- 修改按钮 -->
+                                <Button v-if="miniShow" icon="pi pi-bars" raised rounded
+                                        @click="switchedAndSelectedToggle"/>
+                                <Button icon="pi pi-upload" raised rounded
+                                        @click="exportCSV"/>
+                            </div>
+                            <SelectButton v-model="dataTableStyle.size" :options="sizeOptions" dataKey="label"
+                                          optionLabel="label"/>
+                            <div class="flex align-items-center justify-content-between">
+                                <label>单元格描边：</label>
+                                <InputSwitch v-model="dataTableStyle.showGridlines"/>
+                            </div>
+                            <div class="flex align-items-center justify-content-between">
+                                <label>交替条纹：</label>
+                                <InputSwitch v-model="dataTableStyle.stripedRows"/>
+                            </div>
+                        </div>
+                        <Divider v-if="!showFooter"/>
+                        <div class="flex flex-column gap-3">
+                            <div v-if="!showFooter" class="flex flex-column gap-3">
+                                <div>
+                                    <label>单页数量：</label>
+                                    <Dropdown v-model="dataTableStyle.rowsPerPage" :options="[5, 10, 20, 50]"/>
                                 </div>
-                                <SelectButton v-model="dataTableStyle.size" :options="sizeOptions" dataKey="label"
-                                              optionLabel="label"/>
-                                <div class="flex align-items-center justify-content-between">
-                                    <label>单元格描边：</label>
-                                    <InputSwitch v-model="dataTableStyle.showGridlines"/>
-                                </div>
-                                <div class="flex align-items-center justify-content-between">
-                                    <label>交替条纹：</label>
-                                    <InputSwitch v-model="dataTableStyle.stripedRows"/>
+                                <div>
+                                    <label>当前页数：</label>
+                                    <Dropdown v-model="dataTableStyle.currentPage"
+                                              :options="Array.from({length: totalPages}, (_, i) => i + 1)"/>
                                 </div>
                             </div>
-                            <Divider v-if="!showFooter"/>
-                            <div class="flex flex-column gap-3">
-                                <div v-if="!showFooter" class="flex flex-column gap-3">
-                                    <div>
-                                        <label>单页数量：</label>
-                                        <Dropdown v-model="dataTableStyle.rowsPerPage" :options="[5, 10, 20, 50]"/>
-                                    </div>
-                                    <div>
-                                        <label>当前页数：</label>
-                                        <Dropdown v-model="dataTableStyle.currentPage"
-                                                  :options="Array.from({length: totalPages}, (_, i) => i + 1)"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </OverlayPanel>
-                    </div>
+                        </div>
+                    </OverlayPanel>
                 </div>
-            </template>
-            <template v-if="showFooter" #paginatorstart>
-                <label>当前显示第 {{ (dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage + 1 }} 至
-                    {{ Math.min(dataTableStyle.currentPage * dataTableStyle.rowsPerPage, totalRecords) }} 项，共
-                    {{ totalRecords }}
-                    条记录</label>
-            </template>
-            <template v-if="showFooter" #paginatorend>
-                <div class="flex flex-row align-items-center justify-content-center">
-                    <div>
-                        <label>单页数量：</label>
-                        <Dropdown v-model="dataTableStyle.rowsPerPage" :options="[5, 10, 20, 50]"/>
-                    </div>
-                    <div>
-                        <label>当前页数：</label>
-                        <Dropdown v-model="dataTableStyle.currentPage"
-                                  :options="Array.from({length: totalPages}, (_, i) => i + 1)"/>
-                    </div>
+            </div>
+        </template>
+        <template v-if="showFooter" #paginatorstart>
+            <label>当前显示第 {{ (dataTableStyle.currentPage - 1) * dataTableStyle.rowsPerPage + 1 }} 至
+                {{ Math.min(dataTableStyle.currentPage * dataTableStyle.rowsPerPage, totalRecords) }} 项，共
+                {{ totalRecords }}
+                条记录</label>
+        </template>
+        <template v-if="showFooter" #paginatorend>
+            <div class="flex flex-row align-items-center justify-content-center">
+                <div>
+                    <label>单页数量：</label>
+                    <Dropdown v-model="dataTableStyle.rowsPerPage" :options="[5, 10, 20, 50]"/>
                 </div>
-            </template>
-            <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
-                    rowReorder/>
-            <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
-                    selectionMode="multiple"></Column>
-            <slot name="column"></slot>
-        </DataTable>
-    </div>
+                <div>
+                    <label>当前页数：</label>
+                    <Dropdown v-model="dataTableStyle.currentPage"
+                              :options="Array.from({length: totalPages}, (_, i) => i + 1)"/>
+                </div>
+            </div>
+        </template>
+        <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
+                rowReorder/>
+        <Column v-if="enableSortedAndSelected" :reorderableColumn="false" headerStyle="width:1%;min-width:1rem;"
+                selectionMode="multiple"></Column>
+        <slot name="column"></slot>
+    </DataTable>
 </template>
 
 <style scoped>

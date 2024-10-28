@@ -11,7 +11,7 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 onBeforeMount(() => {
-    dataInit(); // 确保数据加载完成后再挂载
+    dataInit();
 });
 
 // 数据初始化
@@ -26,7 +26,7 @@ const dataInit = () => {
 };
 
 // 删除逻辑
-const onRowDelete = (records: BaseFiled[]) => {
+const onRowDelete = (records: Account[]) => {
     request({
         url: '/acc/delete',
         method: 'POST',
@@ -59,7 +59,7 @@ const onTableDataRefresh = () => {
 };
 
 // 顺序交换逻辑
-const onOrderSwap = (swapRecords: BaseFiled[]) => {
+const onOrderSwap = (swapRecords: Account[]) => {
     request({
         url: '/acc/orderSwap',
         method: 'POST',
@@ -75,6 +75,25 @@ const onOrderSwap = (swapRecords: BaseFiled[]) => {
     });
 };
 
+// 修改逻辑
+const showModifyDialog = ref(false);
+const modifyAccountRecord = ref<Account>({});
+const onRowModify = (modifyRecord: Account) => {
+    modifyAccountRecord.value = modifyRecord;
+    showModifyDialog.value = (modifyAccountRecord.value !== undefined);
+};
+const saveModify = () => {
+    request({
+        url: '/acc/update',
+        method: 'POST',
+        data: modifyAccountRecord.value
+    }).then((response: AxiosResponse) => {
+        toast.add(responseToastConfig(response));
+        dataInit();
+        showModifyDialog.value = false;
+    });
+};
+
 // 字段列表
 const filedList = ref<Array<ColumnProps>>([
     { field: 'openId', header: 'OpenID', style: 'width:20%;min-width:10rem;' },
@@ -86,23 +105,76 @@ const filedList = ref<Array<ColumnProps>>([
 </script>
 
 <template>
-    <CustomDataTable :on-order-swap="onOrderSwap"
-                     :on-row-delete="onRowDelete"
-                     :on-row-modify="onRowReorder"
-                     :on-row-reorder="onRowReorder"
-                     :on-table-data-refresh="onTableDataRefresh"
-                     :table-data="tableData"
-                     table-name="账户">
-        <template #column>
-            <Column v-for="filed in filedList"
-                    :key="filed.field"
-                    :field="filed.field"
-                    :header="filed.header"
-                    :headerStyle="filed?.style"
-                    :reorderableColumn="false"
-                    sortable=""></Column>
-        </template>
-    </CustomDataTable>
+    <div class="card">
+        <CustomDataTable :on-order-swap="onOrderSwap"
+                         :on-row-delete="onRowDelete"
+                         :on-row-modify="onRowModify"
+                         :on-row-reorder="onRowReorder"
+                         :on-table-data-refresh="onTableDataRefresh"
+                         :table-data="tableData"
+                         table-name="账户">
+            <template #column>
+                <Column v-for="filed in filedList"
+                        :key="filed.field"
+                        :field="filed.field"
+                        :header="filed.header"
+                        :headerStyle="filed?.style"
+                        :reorderableColumn="false"
+                        sortable=""></Column>
+            </template>
+        </CustomDataTable>
+
+        <Dialog v-model:visible="showModifyDialog" modal class="p-fluid w-3">
+            <template #header>
+                <div class="p-dialog-title">修改数据</div>
+            </template>
+            <div class="field">
+                <label>账号名称</label>
+                <InputText
+                    id="nickname"
+                    v-model="modifyAccountRecord.nickname"
+                    integeronly
+                />
+            </div>
+
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>手机号</label>
+                    <InputText
+                        id="phone"
+                        v-model="modifyAccountRecord.phone"
+                        integeronly
+                    />
+                </div>
+                <div class="field col">
+                    <label>邮箱</label>
+                    <InputText
+                        id="email"
+                        v-model="modifyAccountRecord.email"
+                        integeronly
+                    />
+                </div>
+            </div>
+            <template #footer>
+                <div class="flex">
+                    <div class="flex ml-auto justify-content-end">
+                        <Button
+                            class="p-button-text"
+                            icon="pi pi-times"
+                            label="返回"
+                            @click="showModifyDialog = false"
+                        />
+                        <Button
+                            class="p-button-text m-0"
+                            icon="pi pi-check"
+                            label="保存修改"
+                            @click="saveModify"
+                        />
+                    </div>
+                </div>
+            </template>
+        </Dialog>
+    </div>
 </template>
 
 <style scoped>
