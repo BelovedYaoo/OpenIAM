@@ -9,11 +9,11 @@ import { storeToRefs } from 'pinia';
 interface customTableProps {
     tableName: string,
     tableData: Array<BaseFiled>,
-    onTableDataRefresh: () => object,
-    onRowReorder: (event: DataTableRowReorderEvent) => object,
-    onRowModify: (record: BaseFiled) => object,
-    onRowDelete: (record: BaseFiled[]) => object,
-    onOrderSwap: (record: BaseFiled[]) => object,
+    onTableDataRefresh: () => void,
+    onRowReorder: (event: DataTableRowReorderEvent) => void,
+    onRowModify: (record: BaseFiled) => void,
+    onRowDelete: (record: BaseFiled[]) => void,
+    onOrderSwap: (record: BaseFiled[]) => void,
 }
 
 const props = defineProps<customTableProps>();
