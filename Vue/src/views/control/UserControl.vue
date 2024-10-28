@@ -113,7 +113,7 @@ const filedList = ref<Array<ColumnProps>>([
                          :on-table-data-refresh="onTableDataRefresh"
                          :table-data="tableData"
                          table-name="账户">
-            <template #column>
+            <template v-slot:column>
                 <Column v-for="filed in filedList"
                         :key="filed.field"
                         :field="filed.field"

@@ -18,11 +18,23 @@ const model = ref([
             {
                 label: '用户管理',
                 icon: 'pi pi-fw pi-user',
-                to: '/control',
                 items: [
                     {
                         label: '用户列表',
                         icon: 'pi pi-fw pi-users',
+                        to: '/control/userControl'
+                    }
+                ]
+            },
+            {
+                label: '应用管理',
+                mdi: 'mdi:table',
+                style: {width:'18px',height:'17px'},
+                items: [
+                    {
+                        label: '应用列表',
+                        mdi: 'mdi:table',
+                        style: {width:'18px',height:'17px'},
                         to: '/control/userControl'
                     }
                 ]

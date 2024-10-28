@@ -2,6 +2,7 @@
 import { onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/service/layout';
+import { Icon } from '@iconify/vue';
 
 const route = useRoute();
 
@@ -74,14 +75,16 @@ const checkActiveRoute = (item: any) => {
         <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
         <a v-if="(!item.to || item.items) && item.visible !== false" :class="item.class"
            :href="item.url" :target="item.target" tabindex="0" @click="itemClick($event, item)">
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
+            <i v-if="!item.mdi" :class="item.icon" class="layout-menuitem-icon"></i>
+            <Icon v-else :icon="item.mdi" :style="item.style" class="layout-menuitem-icon"/>
             <span class="layout-menuitem-text font-semibold">{{ item.label }}</span>
             <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
         </a>
         <router-link v-if="item.to && !item.items && item.visible !== false"
                      :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
                      :to="item.to" tabindex="0" @click="itemClick($event, item)">
-            <i v-if="item.icon" :class="item.icon" class="layout-menuitem-icon"></i>
+            <i v-if="item.icon&&!item.mdi" :class="item.icon" class="layout-menuitem-icon"></i>
+            <Icon v-else :icon="item.mdi" :style="item.style" class="layout-menuitem-icon"/>
             <Avatar v-if="item.img" :image="item.img" class="mr-2 border-circle" shape="circle"
                     style="width: 18px; height: 18px"/>
             <span class="layout-menuitem-text font-semibold">{{ item.label }}</span>

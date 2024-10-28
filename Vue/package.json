@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@iconify/vue": "^4.1.2",
         "@types/js-cookie": "^3.0.6",
         "@types/node": "^22.3.0",
         "axios": "^1.7.4",
