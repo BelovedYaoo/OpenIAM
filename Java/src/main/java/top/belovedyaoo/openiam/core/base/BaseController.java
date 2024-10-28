@@ -25,7 +25,7 @@ import java.util.List;
  * 基础控制器
  *
  * @author BelovedYaoo
- * @version 1.3
+ * @version 1.4
  */
 @RequiredArgsConstructor
 public abstract class BaseController<T extends BaseFiled> {
@@ -190,6 +190,34 @@ public abstract class BaseController<T extends BaseFiled> {
 
         platformTransactionManager.commit(transactionStatus);
         return Result.success().message("数据排序成功");
+    }
+
+    /**
+     * 顺序交换
+     *
+     * @param leftTargetBaseId    左目标ID
+     * @param leftTargetOrderNum  左目标OrderNum
+     * @param rightTargetBaseId   右目标ID
+     * @param rightTargetOrderNum 右目标OrderNum
+     *
+     * @return 交换结果
+     */
+    @PostMapping("/orderSwap")
+    public Result orderSwap(@RequestParam(value = "leftTargetBaseId") String leftTargetBaseId,
+                            @RequestParam(value = "leftTargetOrderNum") int leftTargetOrderNum,
+                            @RequestParam(value = "rightTargetBaseId") String rightTargetBaseId,
+                            @RequestParam(value = "rightTargetOrderNum") int rightTargetOrderNum) {
+
+        UpdateChain.of(getOriginalClass())
+                .set(BaseFiled.ORDER_NUM, rightTargetOrderNum)
+                .where(BaseFiled.BASE_ID + " = '" + leftTargetBaseId + "'")
+                .update();
+        UpdateChain.of(getOriginalClass())
+                .set(BaseFiled.ORDER_NUM, leftTargetOrderNum)
+                .where(BaseFiled.BASE_ID + " = '" + rightTargetBaseId + "'")
+                .update();
+
+        return Result.success().message("顺序交换成功");
     }
 
 }
