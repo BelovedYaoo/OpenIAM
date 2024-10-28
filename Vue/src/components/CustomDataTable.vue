@@ -3,7 +3,7 @@ import { FilterMatchMode } from 'primevue/api';
 import { computed, onBeforeMount, ref, watch } from 'vue';
 import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
-import { storeState, useCounterStore } from '@/service/store';
+import { storeState, useMainStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
 
 interface customTableProps {
@@ -70,24 +70,30 @@ const totalRecords = ref(0);
 
 // 监听页面数量变化
 watch(() => dataTableStyle.value.rowsPerPage, (newValue, oldValue) => {
-    // 根据页面数量计算总页数
-    totalPages.value = Math.ceil(props.tableData.length / dataTableStyle.value.rowsPerPage);
-    // 重置当前页
+    // 修正当前页数
     dataTableStyle.value.currentPage = Math.max(Math.ceil(((dataTableStyle.value.currentPage - 1) * oldValue + 1) / newValue), 1);
+    correctTotalPages();
 });
 
+// 监听表格数据变化
 watch(() => props.tableData, () => {
-    totalPages.value = Math.ceil(props.tableData.length / dataTableStyle.value.rowsPerPage);
+    // 修正总记录数
     totalRecords.value = props.tableData.length;
+    correctTotalPages();
 });
 
-// 当通过DataTable分页器切换分页时，通知底部分页器同步
+// 修正总页数
+const correctTotalPages = () => {
+    totalPages.value = Math.ceil(props.tableData.length / dataTableStyle.value.rowsPerPage);
+};
+
+// 当通过表格分页器切换分页时，通知底部分页器同步
 const onPageChange = (event: DataTablePageEvent) => {
     dataTableStyle.value.currentPage = event.page + 1;
 };
 
 // 从状态仓库取出窗口宽度与高度
-const store = useCounterStore();
+const store = useMainStore();
 const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
 
 const { layoutState } = useLayout();

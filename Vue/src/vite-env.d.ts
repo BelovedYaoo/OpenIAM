@@ -17,7 +17,7 @@ declare module '@/service/layout' {
 declare module '@/service/store' {
     import { StoreGeneric } from 'pinia';
 
-    export function useCounterStore();
+    export function useMainStore();
 
     export interface storeState extends StoreGeneric {
         windowWidth: number

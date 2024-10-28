@@ -26,7 +26,7 @@ const dataInit = () => {
 };
 
 // 删除逻辑
-const deleteRecord = async (records: BaseFiled[]) => {
+const onRowDelete = (records: BaseFiled[]) => {
     request({
         url: '/acc/delete',
         method: 'POST',
@@ -63,7 +63,7 @@ const filedList = ref<Array<ColumnProps>>([
 </script>
 
 <template>
-    <CustomDataTable :on-row-delete="deleteRecord"
+    <CustomDataTable :on-row-delete="onRowDelete"
                      :on-row-modify="onRowReorder"
                      :on-row-reorder="onRowReorder"
                      :table-data="tableData"

@@ -5,7 +5,7 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import { useLayout } from '@/service/layout';
 import { useRoute } from 'vue-router';
-import { storeState, useCounterStore } from '@/service/store';
+import { storeState, useMainStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
@@ -69,7 +69,7 @@ const isOutsideClicked = (event: PointerEvent) => {
     }
 };
 
-const store = useCounterStore();
+const store = useMainStore();
 const { windowWidth, windowHeight } = storeToRefs<storeState>(store);
 
 onMounted(() => {

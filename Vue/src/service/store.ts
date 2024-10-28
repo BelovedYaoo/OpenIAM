@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { storeState } from '@/service/store';
 
-export const useCounterStore = defineStore('main', {
+export const useMainStore = defineStore('main', {
     state: (): storeState => {
         return {
             windowWidth: 1920,
