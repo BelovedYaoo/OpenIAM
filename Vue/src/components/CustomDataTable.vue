@@ -1,10 +1,18 @@
 <script lang="ts" setup>
 import { FilterMatchMode } from 'primevue/api';
 import { computed, onBeforeMount, ref, watch } from 'vue';
-import { DataTablePageEvent, DataTableRowContextMenuEvent, DataTableRowReorderEvent } from 'primevue/datatable';
+import {
+    DataTablePageEvent,
+    DataTableRowContextMenuEvent,
+    DataTableRowReorderEvent,
+    DataTableSortEvent
+} from 'primevue/datatable';
 import { useLayout } from '@/service/layout';
 import { storeState, useMainStore } from '@/service/store';
 import { storeToRefs } from 'pinia';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 interface customTableProps {
     tableName: string,
@@ -110,11 +118,6 @@ const miniShow = computed(() => {
     return windowWidth.value < 563;
 });
 
-// 行重新排序事件
-const onRowReorder = (event: DataTableRowReorderEvent) => {
-    props.onRowReorder(event);
-};
-
 // 表数据导出
 const dataTable = ref();
 const exportCSV = () => {
@@ -183,11 +186,32 @@ const deleteRecords = (deleteRecords: BaseFiled[]) => {
     selectedRecords.value = selectedRecords.value.filter(selectedRecord => !deleteRecords.includes(selectedRecord));
 };
 
+// 字段排序事件
+const inSort = ref();
+const onSort = (event: DataTableSortEvent) => {
+    inSort.value = event.multiSortMeta.length > 0;
+};
+
+// 行排序事件
+const onRowReorder = (event: DataTableRowReorderEvent) => {
+    if (inSort.value) {
+        toast.add({
+            severity: 'error',
+            summary: '排序失败',
+            detail: '按字段排序时，不允许对行排序',
+            life: 3000
+        });
+        return;
+    }
+    props.onRowReorder(event);
+};
+
 // 顺序交换逻辑
 const orderSwap = (swapRecords: BaseFiled[]) => {
     props.onOrderSwap(swapRecords);
     selectedRecords.value = [];
 };
+
 </script>
 
 <template>
@@ -217,7 +241,8 @@ const orderSwap = (swapRecords: BaseFiled[]) => {
                tableStyle="min-width: 50rem"
                @page="onPageChange"
                @rowContextmenu="onRowContextMenu"
-               @rowReorder="onRowReorder">
+               @rowReorder="onRowReorder"
+               @sort="onSort">
         <template #header>
             <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                 <span class="text-xl text-900 font-bold">{{ props.tableName }}</span>
