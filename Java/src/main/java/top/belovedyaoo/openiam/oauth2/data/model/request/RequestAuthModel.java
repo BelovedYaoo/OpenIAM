@@ -1,8 +1,10 @@
 package top.belovedyaoo.openiam.oauth2.data.model.request;
 
-import top.belovedyaoo.openiam.oauth2.error.SaOAuth2ErrorCode;
-import top.belovedyaoo.openiam.oauth2.exception.SaOAuth2Exception;
 import cn.dev33.satoken.util.SaFoxUtil;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import top.belovedyaoo.openiam.oauth2.error.OpenAuthErrorCode;
+import top.belovedyaoo.openiam.oauth2.exception.OpenAuthException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,180 +12,67 @@ import java.util.List;
 /**
  * 请求授权参数的 Model
  *
- * @author click33
- * @since 1.23.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
+@Data
+@Accessors(chain = true)
 public class RequestAuthModel implements Serializable {
 
-	private static final long serialVersionUID = -6541180061782004705L;
+    /**
+     * 应用id
+     */
+    public String clientId;
 
-	/**
-	 * 应用id 
-	 */
-	public String clientId;
-	 
-	/**
-	 * 授权范围
-	 */
-	public List<String> scopes;
-	
-	/**
-	 * 对应的账号id 
-	 */
-	public Object loginId;
-	
-	/**
-	 * 待重定向URL
-	 */
-	public String redirectUri; 
-	
-	/**
-	 * 授权类型, 非必填 
-	 */
-	public String responseType;
+    /**
+     * 授权范围
+     */
+    public List<String> scopes;
 
-	/**
-	 * 状态标识, 可为null 
-	 */
-	public String state;
+    /**
+     * 对应的账号id
+     */
+    public Object loginId;
 
-	/**
-	 * 随机数
-	 */
-	public String nonce;
+    /**
+     * 待重定向URL
+     */
+    public String redirectUri;
 
-	
-	/**
-	 * @return clientId
-	 */
-	public String getClientId() {
-		return clientId;
-	}
+    /**
+     * 授权类型, 非必填
+     */
+    public String responseType;
 
-	/**
-	 * @param clientId 要设置的 clientId
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setClientId(String clientId) {
-		this.clientId = clientId;
-		return this;
-	}
+    /**
+     * 状态标识, 可为null
+     */
+    public String state;
 
-	/**
-	 * @return scopes
-	 */
-	public List<String> getScopes() {
-		return scopes;
-	}
+    /**
+     * 随机数
+     */
+    public String nonce;
 
-	/**
-	 * @param scopes 要设置的 scopes
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setScopes(List<String> scopes) {
-		this.scopes = scopes;
-		return this;
-	}
+    /**
+     * 检查此Model参数是否有效
+     *
+     * @return 对象自身
+     */
+    public RequestAuthModel checkModel() {
+        if (SaFoxUtil.isEmpty(clientId)) {
+            throw new OpenAuthException("client_id 不可为空").setCode(OpenAuthErrorCode.CODE_30101);
+        }
+        if (SaFoxUtil.isEmpty(scopes)) {
+            throw new OpenAuthException("scope 不可为空").setCode(OpenAuthErrorCode.CODE_30102);
+        }
+        if (SaFoxUtil.isEmpty(redirectUri)) {
+            throw new OpenAuthException("redirect_uri 不可为空").setCode(OpenAuthErrorCode.CODE_30103);
+        }
+        if (SaFoxUtil.isEmpty(String.valueOf(loginId))) {
+            throw new OpenAuthException("LoginId 不可为空").setCode(OpenAuthErrorCode.CODE_30104);
+        }
+        return this;
+    }
 
-	/**
-	 * @return loginId
-	 */
-	public Object getLoginId() {
-		return loginId;
-	}
-
-	/**
-	 * @param loginId 要设置的 loginId
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setLoginId(Object loginId) {
-		this.loginId = loginId;
-		return this;
-	}
-
-	/**
-	 * @return redirectUri
-	 */
-	public String getRedirectUri() {
-		return redirectUri;
-	}
-
-	/**
-	 * @param redirectUri 要设置的 redirectUri
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setRedirectUri(String redirectUri) {
-		this.redirectUri = redirectUri;
-		return this;
-	}
-
-	/**
-	 * @return responseType
-	 */
-	public String getResponseType() {
-		return responseType;
-	}
-
-	/**
-	 * @param responseType 要设置的 responseType
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setResponseType(String responseType) {
-		this.responseType = responseType;
-		return this;
-	}
-	
-	/**
-	 * @return state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @param state 要设置的 state
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setState(String state) {
-		this.state = state;
-		return this;
-	}
-
-	/**
-	 * @return nonce
-	 */
-	public String getNonce() {
-		return nonce;
-	}
-
-	/**
-	 * @param nonce 要设置的随机数
-	 * @return 对象自身
-	 */
-	public RequestAuthModel setNonce(String nonce) {
-		this.nonce = nonce;
-		return this;
-	}
-
-	/**
-	 * 检查此Model参数是否有效  
-	 * @return 对象自身
-	 */
-	public RequestAuthModel checkModel() {
-		if(SaFoxUtil.isEmpty(clientId)) {
-			throw new SaOAuth2Exception("client_id 不可为空").setCode(SaOAuth2ErrorCode.CODE_30101);
-		}
-		if(SaFoxUtil.isEmpty(scopes)) {
-			throw new SaOAuth2Exception("scope 不可为空").setCode(SaOAuth2ErrorCode.CODE_30102);
-		}
-		if(SaFoxUtil.isEmpty(redirectUri)) {
-			throw new SaOAuth2Exception("redirect_uri 不可为空").setCode(SaOAuth2ErrorCode.CODE_30103);
-		}
-		if(SaFoxUtil.isEmpty(String.valueOf(loginId))) {
-			throw new SaOAuth2Exception("LoginId 不可为空").setCode(SaOAuth2ErrorCode.CODE_30104);
-		}
-		return this;
-	}
-
-	
 }

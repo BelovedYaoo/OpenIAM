@@ -1,10 +1,10 @@
 package top.belovedyaoo.openiam.oauth2.scope;
 
 /**
- * OAuth2 常见权限定义
+ * OpenAuth 常见权限定义
  *
- * @author click33
- * @since 1.39.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
 public final class CommonScope {
 

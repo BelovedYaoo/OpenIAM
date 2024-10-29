@@ -5,17 +5,14 @@ import java.util.Map;
 
 /**
  * OIDC IdToken Model
- *
  * <br/> 参考：
  * <br/> <a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">IDToken</a>
  * <br/> <a href="https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims">StandardClaims</a>
  *
- * @author click33
- * @since 1.23.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
 public class IdTokenModel implements Serializable {
-
-	private static final long serialVersionUID = -6541180061782004705L;
 
 	/**
 	 * 必填：发行者标识符，例如：https://server.example.com

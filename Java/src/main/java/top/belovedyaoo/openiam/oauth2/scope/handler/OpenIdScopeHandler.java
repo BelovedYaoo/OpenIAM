@@ -1,7 +1,7 @@
 package top.belovedyaoo.openiam.oauth2.scope.handler;
 
-import top.belovedyaoo.openiam.oauth2.SaOAuth2Manager;
-import top.belovedyaoo.openiam.oauth2.consts.SaOAuth2Consts;
+import top.belovedyaoo.openiam.oauth2.OpenAuthManager;
+import top.belovedyaoo.openiam.oauth2.consts.OpenAuthConst;
 import top.belovedyaoo.openiam.oauth2.data.model.AccessTokenModel;
 import top.belovedyaoo.openiam.oauth2.data.model.ClientTokenModel;
 import top.belovedyaoo.openiam.oauth2.scope.CommonScope;
@@ -9,18 +9,19 @@ import top.belovedyaoo.openiam.oauth2.scope.CommonScope;
 /**
  * OpenId 权限处理器：在 AccessToken 扩展参数中追加 openid 字段
  *
- * @author click33
- * @since 1.39.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
-public class OpenIdScopeHandler implements SaOAuth2ScopeHandlerInterface {
+public class OpenIdScopeHandler implements OpenAuthScopeHandlerInterface {
 
+    @Override
     public String getHandlerScope() {
         return CommonScope.OPENID;
     }
 
     @Override
     public void workAccessToken(AccessTokenModel at) {
-        at.extraData.put(SaOAuth2Consts.ExtraField.openid, SaOAuth2Manager.getDataLoader().getOpenid(at.clientId, at.loginId));
+        at.extraData.put(OpenAuthConst.ExtraField.openid, OpenAuthManager.getDataLoader().getOpenid(at.clientId, at.loginId));
     }
 
     @Override

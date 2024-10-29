@@ -6,13 +6,13 @@ import cn.dev33.satoken.context.model.SaRequest;
 import cn.dev33.satoken.jwt.SaJwtUtil;
 import cn.dev33.satoken.jwt.error.SaJwtErrorCode;
 import cn.dev33.satoken.jwt.exception.SaJwtException;
-import top.belovedyaoo.openiam.oauth2.SaOAuth2Manager;
-import top.belovedyaoo.openiam.oauth2.consts.SaOAuth2Consts;
+import top.belovedyaoo.openiam.oauth2.OpenAuthManager;
+import top.belovedyaoo.openiam.oauth2.consts.OpenAuthConst;
 import top.belovedyaoo.openiam.oauth2.data.model.AccessTokenModel;
 import top.belovedyaoo.openiam.oauth2.data.model.ClientTokenModel;
 import top.belovedyaoo.openiam.oauth2.data.model.oidc.IdTokenModel;
 import top.belovedyaoo.openiam.oauth2.data.model.request.ClientIdAndSecretModel;
-import top.belovedyaoo.openiam.oauth2.exception.SaOAuth2Exception;
+import top.belovedyaoo.openiam.oauth2.exception.OpenAuthException;
 import top.belovedyaoo.openiam.oauth2.scope.CommonScope;
 import cn.dev33.satoken.util.SaFoxUtil;
 
@@ -24,11 +24,12 @@ import java.util.Map;
 /**
  * id_token 权限处理器：在 AccessToken 扩展参数中追加 id_token 字段
  *
- * @author click33
- * @since 1.39.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
-public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
+public class OidcScopeHandler implements OpenAuthScopeHandlerInterface {
 
+    @Override
     public String getHandlerScope() {
         return CommonScope.OIDC;
     }
@@ -36,7 +37,7 @@ public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
     @Override
     public void workAccessToken(AccessTokenModel at) {
         SaRequest req = SaHolder.getRequest();
-        ClientIdAndSecretModel client = SaOAuth2Manager.getDataResolver().readClientIdAndSecret(req);
+        ClientIdAndSecretModel client = OpenAuthManager.getDataResolver().readClientIdAndSecret(req);
 
         // 基础参数
         IdTokenModel idToken = new IdTokenModel();
@@ -44,8 +45,8 @@ public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
         idToken.sub = at.loginId;
         idToken.aud = client.clientId;
         idToken.iat = System.currentTimeMillis() / 1000;
-        idToken.exp = idToken.iat + SaOAuth2Manager.getServerConfig().getOidc().getIdTokenTimeout();
-        idToken.authTime = SaOAuth2Manager.getStpLogic().getSessionByLoginId(at.loginId).getCreateTime() / 1000;
+        idToken.exp = idToken.iat + OpenAuthManager.getServerConfig().getOidc().getIdTokenTimeout();
+        idToken.authTime = OpenAuthManager.getStpLogic().getSessionByLoginId(at.loginId).getCreateTime() / 1000;
         idToken.nonce = getNonce();
         idToken.acr = null;
         idToken.amr = null;
@@ -81,7 +82,7 @@ public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
             }
             return iss;
         } catch (MalformedURLException e) {
-            throw new SaOAuth2Exception(e);
+            throw new OpenAuthException(e);
         }
     }
 
@@ -90,11 +91,11 @@ public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
      * @return /
      */
     public String getNonce() {
-        String nonce = SaHolder.getRequest().getParam(SaOAuth2Consts.Param.nonce);
+        String nonce = SaHolder.getRequest().getParam(OpenAuthConst.Param.nonce);
         if(SaFoxUtil.isEmpty(nonce)) {
             //通过code查找nonce
             //为了避免其它handler可能会用到nonce,任由其自然过期，只取用不删除
-            nonce = SaOAuth2Manager.getDao().getNonce(SaHolder.getRequest().getParam(SaOAuth2Consts.Param.code));
+            nonce = OpenAuthManager.getDao().getNonce(SaHolder.getRequest().getParam(OpenAuthConst.Param.code));
         }
         if(SaFoxUtil.isEmpty(nonce)) {
             nonce = SaFoxUtil.getRandomString(32);
@@ -147,7 +148,7 @@ public class OidcScopeHandler implements SaOAuth2ScopeHandlerInterface {
      */
     public String generateJwtIdToken(IdTokenModel idToken) {
         Map<String, Object> dataMap = convertIdTokenToMap(idToken);
-        String keyt = SaOAuth2Manager.getStpLogic().getConfigOrGlobal().getJwtSecretKey();
+        String keyt = OpenAuthManager.getStpLogic().getConfigOrGlobal().getJwtSecretKey();
         SaJwtException.throwByNull(keyt, "请配置jwt秘钥", SaJwtErrorCode.CODE_30205);
         return SaJwtUtil.createToken(dataMap, keyt);
     }

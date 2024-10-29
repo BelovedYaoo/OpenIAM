@@ -1,12 +1,12 @@
 package top.belovedyaoo.openiam.oauth2.handler;
 
 import cn.dev33.satoken.context.model.SaRequest;
-import top.belovedyaoo.openiam.oauth2.SaOAuth2Manager;
-import top.belovedyaoo.openiam.oauth2.consts.GrantType;
-import top.belovedyaoo.openiam.oauth2.consts.SaOAuth2Consts;
+import top.belovedyaoo.openiam.oauth2.OpenAuthManager;
+import top.belovedyaoo.openiam.oauth2.consts.OpenAuthGrantType;
+import top.belovedyaoo.openiam.oauth2.consts.OpenAuthConst;
 import top.belovedyaoo.openiam.oauth2.data.model.AccessTokenModel;
 import top.belovedyaoo.openiam.oauth2.data.model.request.RequestAuthModel;
-import top.belovedyaoo.openiam.oauth2.exception.SaOAuth2Exception;
+import top.belovedyaoo.openiam.oauth2.exception.OpenAuthException;
 import cn.dev33.satoken.stp.StpUtil;
 
 import java.util.List;
@@ -14,28 +14,28 @@ import java.util.List;
 /**
  * password grant_type 处理器
  *
- * @author click33
- * @since 1.39.0
+ * @author BelovedYaoo
+ * @version 1.0
  */
-public class PasswordGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterface {
+public class PasswordGrantTypeHandler implements GrantTypeHandlerInterface {
 
     @Override
     public String getHandlerGrantType() {
-        return GrantType.password;
+        return OpenAuthGrantType.password;
     }
 
     @Override
     public AccessTokenModel getAccessToken(SaRequest req, String clientId, List<String> scopes) {
 
         // 1、获取请求参数
-        String username = req.getParamNotNull(SaOAuth2Consts.Param.username);
-        String password = req.getParamNotNull(SaOAuth2Consts.Param.password);
+        String username = req.getParamNotNull(OpenAuthConst.Param.username);
+        String password = req.getParamNotNull(OpenAuthConst.Param.password);
 
         // 3、调用API 开始登录，如果没能成功登录，则直接退出
         loginByUsernamePassword(username, password);
         Object loginId = StpUtil.getLoginIdDefaultNull();
         if(loginId == null) {
-            throw new SaOAuth2Exception("登录失败");
+            throw new OpenAuthException("登录失败");
         }
 
         // 4、构建 ra 对象
@@ -45,8 +45,7 @@ public class PasswordGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterfa
         ra.scopes = scopes;
 
         // 5、生成 Access-Token
-        AccessTokenModel at = SaOAuth2Manager.getDataGenerate().generateAccessToken(ra, true);
-        return at;
+        return OpenAuthManager.getDataGenerate().generateAccessToken(ra, true);
     }
 
     /**
@@ -55,7 +54,7 @@ public class PasswordGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterfa
      * @param password /
      */
     public void loginByUsernamePassword(String username, String password) {
-        SaOAuth2Manager.getServerConfig().doLoginHandle.apply(username, password);
+        OpenAuthManager.getServerConfig().doLogin.apply(username, password);
     }
 
 }
