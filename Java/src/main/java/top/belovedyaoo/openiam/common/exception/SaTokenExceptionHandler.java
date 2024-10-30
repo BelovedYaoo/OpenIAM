@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import top.belovedyaoo.openiam.core.result.Result;
+import top.belovedyaoo.agcore.result.Result;
+import top.belovedyaoo.agcore.result.ResultEnum;
 import top.belovedyaoo.openiam.permission.enums.AuthenticationResultEnum;
-import top.belovedyaoo.openiam.core.result.ResultEnum;
 import top.belovedyaoo.openiam.common.toolkit.LogUtil;
 
 /**

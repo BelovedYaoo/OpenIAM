@@ -1,8 +1,5 @@
 package top.belovedyaoo.openiam.oauth2.function;
 
-
-import top.belovedyaoo.openiam.core.result.Result;
-
 import java.util.function.Supplier;
 
 /**
@@ -15,6 +12,6 @@ import java.util.function.Supplier;
  * @version 1.0
  */
 @FunctionalInterface
-public interface NotLoginFunction extends Supplier<Result> {
+public interface NotLoginFunction extends Supplier<Object> {
 
 }

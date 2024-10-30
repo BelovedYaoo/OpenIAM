@@ -1,7 +1,7 @@
 package top.belovedyaoo.openiam.permission.service;
 
+import top.belovedyaoo.agcore.result.Result;
 import top.belovedyaoo.openiam.permission.entity.Account;
-import top.belovedyaoo.openiam.core.result.Result;
 
 /**
  * 认证服务

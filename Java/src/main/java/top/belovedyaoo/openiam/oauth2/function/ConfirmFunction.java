@@ -1,8 +1,5 @@
 package top.belovedyaoo.openiam.oauth2.function;
 
-
-import top.belovedyaoo.openiam.core.result.Result;
-
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -16,6 +13,6 @@ import java.util.function.BiFunction;
  * @version 1.0
  */
 @FunctionalInterface
-public interface ConfirmFunction extends BiFunction<String, List<String>, Result> {
+public interface ConfirmFunction extends BiFunction<String, List<String>, Object> {
 
 }

@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import top.belovedyaoo.openiam.core.base.BaseFiled;
-import top.belovedyaoo.openiam.core.sensitization.Sensitization;
-import top.belovedyaoo.openiam.core.sensitization.SensitizationType;
+import top.belovedyaoo.agcore.base.BaseFiled;
+import top.belovedyaoo.agcore.sensitization.Sensitization;
+import top.belovedyaoo.agcore.sensitization.SensitizationType;
 
 import java.io.Serializable;
 

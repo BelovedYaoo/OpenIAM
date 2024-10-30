@@ -4,7 +4,7 @@ import com.mybatisflex.core.BaseMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.belovedyaoo.openiam.core.base.BaseController;
+import top.belovedyaoo.agcore.base.BaseController;
 import top.belovedyaoo.openiam.permission.entity.Account;
 
 /**

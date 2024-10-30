@@ -2,7 +2,6 @@ package top.belovedyaoo.openiam.oauth2.config;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import top.belovedyaoo.openiam.core.result.Result;
 import top.belovedyaoo.openiam.oauth2.consts.OpenAuthConst;
 import top.belovedyaoo.openiam.oauth2.data.model.loader.OpenAuthClientModel;
 import top.belovedyaoo.openiam.oauth2.function.ConfirmFunction;
@@ -114,17 +113,17 @@ public class ServerConfig implements Serializable {
     /**
      * OAuth-Server端：未登录时返回的View
      */
-    public NotLoginFunction notLogin = () -> Result.failed().message("你需要重写此函数，实现自己的逻辑");
+    public NotLoginFunction notLogin = () -> "你需要重写此函数，实现自己的逻辑";
 
     /**
      * OAuth-Server端：确认授权时返回的View
      */
-    public ConfirmFunction confirm = (clientId, scopes) -> Result.failed().message("你需要重写此函数，实现自己的逻辑");
+    public ConfirmFunction confirm = (clientId, scopes) -> "你需要重写此函数，实现自己的逻辑";
 
     /**
      * OAuth-Server端：登录函数
      */
-    public DoLoginFunction doLogin = (name, pwd) -> Result.failed().message("你需要重写此函数，实现自己的逻辑");
+    public DoLoginFunction doLogin = (name, pwd) -> "你需要重写此函数，实现自己的逻辑";
 
     /**
      * 注册 client

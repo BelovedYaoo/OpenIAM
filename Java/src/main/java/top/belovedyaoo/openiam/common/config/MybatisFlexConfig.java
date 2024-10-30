@@ -6,9 +6,9 @@ import com.mybatisflex.core.audit.ConsoleMessageCollector;
 import com.mybatisflex.core.logicdelete.LogicDeleteManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.belovedyaoo.openiam.core.base.LogicDeleteProcessor;
-import top.belovedyaoo.openiam.core.eo.EntityInsertListener;
-import top.belovedyaoo.openiam.core.eo.EntityUpdateListener;
+import top.belovedyaoo.agcore.base.LogicDeleteProcessor;
+import top.belovedyaoo.agcore.eo.EntityInsertListener;
+import top.belovedyaoo.agcore.eo.EntityUpdateListener;
 
 /**
  * Mybatis-Flex 框架的配置类

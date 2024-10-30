@@ -1,8 +1,5 @@
 package top.belovedyaoo.openiam.oauth2.function;
 
-
-import top.belovedyaoo.openiam.core.result.Result;
-
 import java.util.function.BiFunction;
 
 /**
@@ -15,6 +12,6 @@ import java.util.function.BiFunction;
  * @version 1.0
  */
 @FunctionalInterface
-public interface DoLoginFunction extends BiFunction<String, String, Result> {
+public interface DoLoginFunction extends BiFunction<String, String, Object> {
 
 }
