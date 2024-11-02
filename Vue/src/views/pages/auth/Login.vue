@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import cookie from 'js-cookie';
-import { sha256 } from 'hash.js';
-import { addClassById, globalConfig, responseToastConfig } from '@/service/globalQuote';
+import { addClassById, getParameterByName, globalConfig, responseToastConfig } from '@/service/globalQuote';
 import request from '@/service/request';
 import router from '@/service/router';
 import LogoSvg from '@/components/LogoSvg.vue';
 import YiYan from '@/components/YiYan.vue';
+import { AxiosResponse } from 'axios';
 
 const toast = useToast();
 
@@ -40,6 +40,14 @@ const checkRegisterAccountInfo = () => {
     }
 };
 
+onMounted(() => {
+    const tokenValue = cookie.get(globalConfig.appTokenName);
+    if (tokenValue === '' || tokenValue === null || tokenValue === undefined) {
+        return;
+    }
+    code();
+});
+
 const login = () => {
     checked.value = true;
     checkRegisterAccountInfo();
@@ -48,10 +56,11 @@ const login = () => {
     }
     request({
         method: 'POST',
-        url: '/auth/accountLogin',
-        data: {
-            openId: openId.value,
-            password: btoa(sha256().update(password.value).digest('hex'))
+        url: '/oauth2/doLogin',
+        params: {
+            username: openId.value,
+            // pwd: btoa(sha256().update(password.value).digest('hex'))
+            password: password.value
         }
     }).then((res) => {
         toast.add(responseToastConfig(res));
@@ -59,9 +68,26 @@ const login = () => {
             // token存入cookie
             cookie.set(globalConfig.appTokenName, res.data.data.tokenValue);
             // 页面跳转
-            router.push({
-                path: '/'
-            });
+            code();
+        }
+    });
+};
+
+const code = () => {
+    alert('code');
+    request({
+        method: 'POST',
+        url: 'http://openiam.top:8090/oauth2/authorize',
+        params: {
+            response_type: getParameterByName('response_type'),
+            client_id: getParameterByName('client_id'),
+            redirect_uri: getParameterByName('redirect_uri'),
+            scope: 'oidc'
+        },
+    }).then((res: AxiosResponse) => {
+        console.log(res.data);
+        if (res.data.code !== 901) {
+            window.location.href = res.data.data;
         }
     });
 };

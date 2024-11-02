@@ -32,6 +32,15 @@ export const addClassById = (id: string, className: string, duringSecond: number
     }
 };
 
+export const getParameterByName = (name, url = window.location.href) => {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${  name  }(=([^&#]*)|&|#|$)`),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+};
+
 /**
  * 全局配置
  */

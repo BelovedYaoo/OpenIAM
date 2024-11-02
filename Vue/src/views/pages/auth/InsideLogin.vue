@@ -89,7 +89,7 @@ const login = () => {
                                 :class="{ 'text-600': openIdIsFocus || openId.length > 0, 'text-500': !openIdIsFocus }"
                                 class="font-bold ml-1" for="username">Open ID</label>
                         </span>
-                        <span class="p-float-label mb-4">
+                        <span class="p-float-label mb-6">
                             <Password
                                 id="password"
                                 v-model="password"
@@ -105,21 +105,12 @@ const login = () => {
                                 class="font-bold ml-1" for="password">Password</label>
                         </span>
 
-                        <div class="flex align-items-center justify-content-between pt-3 mb-3 gap-5">
+                        <Button class="w-full p-3 text-xl" label="登录" @click="login()"></Button>
+                        <div class="flex align-items-center justify-content-between pt-3 mt-0 gap-5">
                             <div class="flex align-items-center">
                                 <Checkbox id="remember" v-model="remember" binary class="mr-2"></Checkbox>
                                 <label for="remember">记住我</label>
                             </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                               style="color: var(--primary-color)">游客访问</a>
-                        </div>
-                        <Button class="w-full p-3 text-xl" label="登录" @click="login()"></Button>
-                        <div class="flex align-items-center justify-content-between pt-3 mt-0 gap-5">
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                               style="color: var(--primary-color)">忘记密码</a>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                               style="color: var(--primary-color)"
-                               @click="router.push({ path: '/auth/register' })">注册账号</a>
                         </div>
                     </div>
                 </div>

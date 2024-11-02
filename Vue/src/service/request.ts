@@ -1,9 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import cookie from 'js-cookie';
 import router from './router';
-import { globalConfig } from './globalQuote.ts';
+import { getParameterByName, globalConfig } from './globalQuote.ts';
 
-export const url: string = 'http://localhost:8090';
+export const url: string = 'http://openiam.top:8090';
+// export const url: string = 'http://192.168.1.100:8090';
 
 // Axios 实例
 const service: AxiosInstance = axios.create({
@@ -36,16 +37,16 @@ service.interceptors.response.use(
         // 获取后端返回的状态码
         const code = res.data.code;
         // 会话失效
-        if (code === 701) {
+        if (code === 901) {
             // 清除token
-            cookie.remove(globalConfig.appTokenName);
+            // cookie.remove(globalConfig.appTokenName);
             // 页面跳转
             router.push({
-                path: '/auth/login',
+                path: '/auth/confirm',
                 query: {
-                    code: code,
-                    description: res.data.description,
-                    message: res.data.message
+                    clientId: res.data.data.clientId,
+                    scope: res.data.data.scope,
+                    redirect_uri: getParameterByName('redirect_uri')
                 }
             });
         }
