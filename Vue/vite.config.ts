@@ -7,7 +7,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin';
 export default defineConfig(() => {
     return {
         server: {
-            port: 3002,
+            port: 9036,
             proxy: {
                 // 韩小韩Api
                 '/vvhan': {

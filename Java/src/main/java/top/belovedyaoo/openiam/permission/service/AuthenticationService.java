@@ -7,7 +7,7 @@ import top.belovedyaoo.openiam.permission.entity.Account;
  * 认证服务
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 public interface AuthenticationService {
 
@@ -19,6 +19,16 @@ public interface AuthenticationService {
      * @return 登录结果
      */
     Result accountLogin(Account accountData);
+
+    /**
+     * 第三方登录方法
+     *
+     * @param openId   OpenID
+     * @param password 密码
+     *
+     * @return 登录结果
+     */
+    Result openLogin(String openId, String password);
 
     /**
      * 账号注册方法

@@ -5,6 +5,7 @@ import cn.dev33.satoken.context.model.SaRequest;
 import cn.dev33.satoken.context.model.SaResponse;
 import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.util.SaResult;
+import top.belovedyaoo.agcore.result.Result;
 import top.belovedyaoo.openiam.oauth2.OpenAuthManager;
 import top.belovedyaoo.openiam.oauth2.OpenAuthTemplate;
 import top.belovedyaoo.openiam.oauth2.config.ServerConfig;
@@ -30,7 +31,7 @@ import java.util.List;
  * OpenAuth 请求处理器
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 public class OpenAuthServerProcessor {
 
@@ -133,14 +134,16 @@ public class OpenAuthServerProcessor {
         if (ResponseType.code.equals(ra.responseType)) {
             CodeModel codeModel = dataGenerate.generateCode(ra);
             String redirectUri = dataGenerate.buildRedirectUri(ra.redirectUri, codeModel.code, ra.state);
-            return res.redirect(redirectUri);
+            // return res.redirect(redirectUri);
+            return Result.success().singleData(redirectUri);
         }
 
         // 		如果是 隐藏式，则：开始重定向授权，下放 token
         if (ResponseType.token.equals(ra.responseType)) {
             AccessTokenModel at = dataGenerate.generateAccessToken(ra, false);
             String redirectUri = dataGenerate.buildImplicitRedirectUri(ra.redirectUri, at.accessToken, ra.state);
-            return res.redirect(redirectUri);
+            // return res.redirect(redirectUri);
+            return Result.success().singleData(redirectUri);
         }
 
         // 默认返回
@@ -211,7 +214,7 @@ public class OpenAuthServerProcessor {
         SaRequest req = SaHolder.getRequest();
         ServerConfig cfg = OpenAuthManager.getServerConfig();
 
-        return cfg.doLogin.apply(req.getParam(Param.name), req.getParam(Param.pwd));
+        return cfg.doLogin.apply(req.getParam(Param.username), req.getParam(Param.password));
     }
 
     /**
@@ -222,6 +225,7 @@ public class OpenAuthServerProcessor {
     public Object doConfirm() {
         // 获取变量
         SaRequest req = SaHolder.getRequest();
+        System.out.println(req.getParamMap());
         String clientId = req.getParamNotNull(Param.client_id);
         Object loginId = OpenAuthManager.getStpLogic().getLoginId();
         String scope = req.getParamNotNull(Param.scope);

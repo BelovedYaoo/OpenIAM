@@ -4,7 +4,7 @@ package top.belovedyaoo.openiam.oauth2.consts;
  * OpenAuth 所有常量
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 public class OpenAuthConst {
 
@@ -41,8 +41,6 @@ public class OpenAuthConst {
 		public static String grant_type = "grant_type";
 		public static String username = "username";
 		public static String password = "password";
-		public static String name = "name";
-		public static String pwd = "pwd";
 		public static String build_redirect_uri = "build_redirect_uri";
 		public static String Authorization = "Authorization";
 		public static String nonce = "nonce";

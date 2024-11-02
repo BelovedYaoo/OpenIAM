@@ -19,7 +19,7 @@ import static cn.hutool.core.util.ObjectUtil.isNull;
  * 认证服务实现类
  *
  * @author BelovedYaoo
- * @version 1.2
+ * @version 1.3
  */
 @Service
 @RequiredArgsConstructor
@@ -70,6 +70,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .data("account", account)
                 .data("tokenValue", StpUtil.getTokenValue());
 
+    }
+
+    @Override
+    public Result openLogin(String openId, String password) {
+        Account account = accountMapper.selectOneByQuery(new QueryWrapper()
+                .eq("open_id", openId));
+
+        // 账号不存在
+        if (account == null) {
+            return Result.failed().resultType(AuthenticationResultEnum.ACCOUNT_LOGIN_ID_INVALID);
+        }
+
+        // 密码错误
+        if (!account.password().equals(password)) {
+            return Result.failed().resultType(AuthenticationResultEnum.ACCOUNT_PASSWORD_ERROR);
+        }
+
+        // 封禁逻辑
+        StpUtil.checkDisable(account.baseId());
+
+        // Sa-Token登录
+        StpUtil.login(account.baseId());
+
+        return Result.success().description("登录成功")
+                .data("account", account)
+                .data("tokenValue", StpUtil.getTokenValue());
     }
 
     /**

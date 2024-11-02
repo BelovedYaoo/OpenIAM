@@ -17,7 +17,7 @@ import top.belovedyaoo.openiam.common.toolkit.LogUtil;
  * Sa-Token异常捕捉
  *
  * @author BelovedYaoo
- * @version 1.0
+ * @version 1.1
  */
 @ControllerAdvice
 @RestControllerAdvice
@@ -37,7 +37,7 @@ public class SaTokenExceptionHandler {
 
         String message = SaTokenExceptionEnum.getDescByType(nle.getType());
 
-        LogUtil.error(message);
+        LogUtil.error("Sa-Token登录异常处理："+message);
 
         return Result.failed().resultType(ResultEnum.SESSION_INVALID).message(message);
 

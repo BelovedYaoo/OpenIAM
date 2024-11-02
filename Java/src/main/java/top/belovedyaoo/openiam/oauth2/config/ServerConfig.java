@@ -123,7 +123,7 @@ public class ServerConfig implements Serializable {
     /**
      * OAuth-Server端：登录函数
      */
-    public DoLoginFunction doLogin = (name, pwd) -> "你需要重写此函数，实现自己的逻辑";
+    public DoLoginFunction doLogin = (username, password) -> "你需要重写此函数，实现自己的逻辑";
 
     /**
      * 注册 client
