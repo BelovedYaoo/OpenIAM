@@ -50,11 +50,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // MyBatis-Flex
-    implementation 'com.mybatis-flex:mybatis-flex-spring-boot-starter:1.9.7'
-    annotationProcessor 'com.mybatis-flex:mybatis-flex-processor:1.9.7'
+    implementation 'com.mybatis-flex:mybatis-flex-spring-boot-starter:1.10.0'
+    annotationProcessor 'com.mybatis-flex:mybatis-flex-processor:1.10.0'
 
     // Auto Table, 官方文档: https://autotable.tangzc.com/
-    implementation 'com.tangzc:auto-table-spring-boot-starter:1.9.3'
+    implementation 'com.tangzc:auto-table-spring-boot-starter:1.9.6'
 
     // MyBatis-Flex + Auto Table的拓展包, 仓库地址: https://gitee.com/tangzc/mybatis-flex-ext
     implementation fileTree(dir: 'E:\\个人文档\\项目\\Lib\\mybatis-flex-ext', include: ['*.jar'])
