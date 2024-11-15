@@ -13,13 +13,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author BelovedYaoo
  * @version 1.0
  */
-@EnableAutoTable
+@EnableAutoTable(basePackages =  {"top.belovedyaoo"})
 @SpringBootApplication(scanBasePackages =  {"top.belovedyaoo"})
-@MapperScan(basePackages = "top.belovedyaoo")
-public class OpenIAMApplication {
+@MapperScan(basePackages = {"top.belovedyaoo"})
+public class OpenIamApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(OpenIAMApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(OpenIamApplication.class, args);
+	}
 
 }

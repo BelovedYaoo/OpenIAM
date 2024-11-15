@@ -1,4 +1,7 @@
 spring:
+    main:
+        # 是否输出banner
+        banner-mode: off
     application:
         name: OpenIAM
     # 全局序列化配置
@@ -62,6 +65,8 @@ server:
 
 # Sa-Token配置
 sa-token:
+    # 是否输出banner
+    is-print: false
     # jwt秘钥
     jwt-secret-key: belovedyaoo
     # token 名称（同时也是 cookie 名称）
